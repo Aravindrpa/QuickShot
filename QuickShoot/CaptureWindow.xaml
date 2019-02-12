@@ -11,7 +11,8 @@
         WindowStyle="None"
         ShowInTaskbar="False"
         AllowsTransparency="True"
-        Background="Transparent">
+        Background="Transparent"
+        Topmost="True">
     <Grid Name="grid_Base">
         <Image Name="img_Back"></Image>
         <Canvas  Name="canvas_Draw" MouseDown="canvas_Draw_MouseDown" 

@@ -51,6 +51,7 @@ namespace QuickShoot
                 switch (e.KeyboardData.VirtualCode)
                 {
                     case (GlobalKeyboardHook.VkSnapshot):
+                        Glob.captureWindow = new CaptureWindow();
                         Glob.captureWindow.Show();
                         break;
                     case (GlobalKeyboardHook.VkEscape):
@@ -58,7 +59,7 @@ namespace QuickShoot
                         {
                             if (win.Name == "capture_window")
                                 if (win.IsActive)
-                                    win.Hide();
+                                    win.Close();
                             if (win.Name == "editor_window")
                                 if (win.IsActive)
                                     win.Close();

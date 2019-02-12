@@ -130,6 +130,8 @@ namespace QuickShoot
             EditorWindow win = new EditorWindow(l,t,wid,hei);
             win.Show();
 
+            this.Close();
+
         }
     }
 }
