@@ -1,0 +1,28 @@
+﻿<Window x:Class="QuickShoot.CaptureWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:QuickShoot"
+        mc:Ignorable="d"
+        Title="CaptureWindow" Height="450" Width="800"
+        Name="capture_window"
+        WindowState="Maximized"
+        WindowStyle="None"
+        ShowInTaskbar="False"
+        AllowsTransparency="True"
+        Background="Transparent">
+    <Grid Name="grid_Base">
+        <Image Name="img_Back"></Image>
+        <Canvas  Name="canvas_Draw" MouseDown="canvas_Draw_MouseDown" 
+                 MouseMove="canvas_Draw_MouseMove"
+                 MouseUp="canvas_Draw_MouseUp">
+            <Canvas.Background>
+                <SolidColorBrush Color="White" Opacity="0"/>
+            </Canvas.Background>
+            <Rectangle Name="Rectangle" Stroke="Black" StrokeThickness="1" Fill="{x:Null}">
+            </Rectangle>
+        </Canvas>
+        <!--<Label Name="tempLabel" Background="White" Width="412" Height="500" HorizontalAlignment="Left" VerticalAlignment="Bottom"></Label>-->
+    </Grid>
+</Window>

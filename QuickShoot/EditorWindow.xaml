@@ -1,0 +1,50 @@
+﻿<Window x:Class="QuickShoot.EditorWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:QuickShoot"
+        mc:Ignorable="d"
+        Title="EditorWindow" 
+        Height="700" Width="1200"
+        WindowStartupLocation="CenterScreen"
+        WindowState="Maximized"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        Background="Transparent"
+        RenderOptions.BitmapScalingMode="HighQuality"
+        RenderOptions.ClearTypeHint="Enabled"
+        RenderOptions.EdgeMode="Aliased"
+        Name="editor_window"
+        >
+    <Grid Background="Transparent" >
+        <Image Name="img_Blur">
+            <Image.Effect>
+                <BlurEffect Radius="8"></BlurEffect>
+            </Image.Effect>
+        </Image>
+        <Grid VerticalAlignment="Top" Height="107" Background="Transparent">
+            <Border Background="Black" Margin="0,35,10,0" HorizontalAlignment="Right" VerticalAlignment="Top"
+                    Height="68" Width="66" Opacity=".65"
+                    BorderThickness="6" CornerRadius="15"
+                    BorderBrush="Black"
+                    >
+                <Label Name="lbl_Close" MouseDown="lbl_Close_MouseDown"  Content="X" FontSize="35" Background="Black" 
+                   Foreground="White" 
+                   HorizontalContentAlignment="Center" 
+                   VerticalContentAlignment="Stretch"
+                   FontWeight="Bold"
+                   ></Label>
+            </Border>
+        </Grid>
+        <Grid Margin="40,100,40,40" Background="Transparent">
+            <Image VerticalAlignment="Bottom" Name="img_Edit">
+                <Image.Effect>
+                    <DropShadowEffect BlurRadius="30" Direction="270" 
+                                      ShadowDepth="11" Opacity=".7">
+                    </DropShadowEffect>
+                </Image.Effect>
+            </Image>
+        </Grid>
+    </Grid>
+</Window>
