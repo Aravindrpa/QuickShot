@@ -32,6 +32,7 @@ namespace QuickShoot
             if(String.IsNullOrEmpty(Glob.Config.ImageStorePath))//Set default save path
                 Glob.Config.ImageStorePath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\QuickShot";
 
+            Glob.ScreenShot = new ScreenShot();
             Glob.captureWindow = new CaptureWindow();
             Glob.folderManager = new FolderManager();
             Glob.Animate = new Animate();

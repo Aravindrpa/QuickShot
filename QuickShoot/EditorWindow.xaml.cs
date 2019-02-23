@@ -29,16 +29,15 @@ namespace QuickShoot
         public DShapes shape { get; set; }
         public DColors color { get; set; }
 
+        private Task<BitmapSource> img_BlurAsync { get; set; }
+        private Task<BitmapSource> img_EditAsync { get; set; }
+
         public EditorWindow(int left, int top, int height, int width)
         {
+            img_BlurAsync = Glob.ScreenShot.Take();
+            img_EditAsync = Glob.ScreenShot.Take(left, top, height, width);
 
             InitializeComponent();
-            img_Blur.Source = new ScreenShot().Take();
-            img_Edit.Source = new ScreenShot().Take(left, top, height, width);
-            SetShape(DShapes.Rectangle);
-            SetColor(DColors.Green);
-            Glob.Animate.Breath(lbl_FileName);
-            //Glob.Animate.Breath(br_Close);
 
         }
 
@@ -286,9 +285,17 @@ namespace QuickShoot
         }
         private void editor_window_Loaded(object sender, RoutedEventArgs e)
         {
+            SetShape(DShapes.Rectangle);
+            SetColor(DColors.Green);
+            Glob.Animate.Breath(lbl_FileName);
+            //Glob.Animate.Breath(br_Close);
+
             textb_FileName.Text = DateTime.Now.ToString("yyyyMMddHHmmssffff");
             textb_FileName.SelectAll();
             Keyboard.Focus(textb_FileName);
+
+            img_Blur.Source = img_BlurAsync.Result;
+            img_Edit.Source = img_EditAsync.Result;
         }
         private void lbl_SQ_MouseDown(object sender, MouseButtonEventArgs e)
         {

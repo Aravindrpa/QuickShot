@@ -34,6 +34,13 @@ namespace QuickShoot
 
         public CaptureWindow()
         {
+
+            InitializeComponent();
+        }
+
+        private void capture_window_Loaded(object sender, RoutedEventArgs e)
+        {
+            var image = Glob.ScreenShot.Take();
             startPoint = new Point();
             br = new Border();
             rect = new Rectangle();
@@ -41,9 +48,7 @@ namespace QuickShoot
             ScreenShot.TransformToPixels(screenWidth, screenHeight, out screenWidthdpi, out screenHeightdpi);
             brThickness = screenWidthdpi * 2; //to make sure the border has enough thickness to overflow the screen area while capturing
 
-            InitializeComponent();
-
-            img_Back.Source = new ScreenShot().Take();
+            img_Back.Source = image.Result;
 
             br = new Border();
             br.BorderThickness = new Thickness(brThickness);
@@ -153,5 +158,7 @@ namespace QuickShoot
             this.Close();
 
         }
+
+
     }
 }

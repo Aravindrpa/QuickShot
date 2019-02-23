@@ -1,14 +1,18 @@
 ﻿using System;
 using System.Drawing;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Interop;
 using System.Windows.Media.Imaging;
 
 namespace QuickShoot.Helpers
 {
-    class ScreenShot
+    public class ScreenShot
     {
-        public BitmapSource Take()
+        public ScreenShot()
+        {
+        }
+        public async Task<BitmapSource> Take()
         {
             double screenLeft = SystemParameters.VirtualScreenLeft;
             double screenTop = SystemParameters.VirtualScreenTop;
@@ -18,17 +22,17 @@ namespace QuickShoot.Helpers
             int screenHeightdpi = 0;
             TransformToPixels(screenWidth, screenHeight, out screenWidthdpi, out screenHeightdpi);
 
-            var bmp = CopyFromBounds((int)screenLeft, (int)screenTop, screenWidthdpi, screenHeightdpi);
-            return ConvertBmpToSource(bmp);
+            var bmp = await CopyFromBounds((int)screenLeft, (int)screenTop, screenWidthdpi, screenHeightdpi);
+            return await ConvertBmpToSource(bmp);
         }
-        public BitmapSource Take(int left, int top, int width, int height)
+        public async Task<BitmapSource> Take(int left, int top, int width, int height)
         {
-            var bmp = CopyFromBounds(left, top, width, height);
-            return ConvertBmpToSource(bmp);
+            var bmp = await CopyFromBounds(left, top, width, height);
+            return await ConvertBmpToSource(bmp);
         }
-        public void TakeAndSave(int left, int top, int width, int height,string path)
+        public async void TakeAndSave(int left, int top, int width, int height,string path)
         {
-            Bitmap bmp = CopyFromBounds(left, top, width, height);
+            Bitmap bmp = await CopyFromBounds(left, top, width, height);
 
             //Attach shadow try1
             //Bitmap shadow = (Bitmap)bmp.Clone();
@@ -63,7 +67,7 @@ namespace QuickShoot.Helpers
 
             bmp.Save(path, System.Drawing.Imaging.ImageFormat.Png);
         }
-        private BitmapSource ConvertBmpToSource(Bitmap bmp)
+        private async Task<BitmapSource> ConvertBmpToSource(Bitmap bmp)
         {
             return Imaging.CreateBitmapSourceFromHBitmap(
                     bmp.GetHbitmap(),
@@ -71,7 +75,7 @@ namespace QuickShoot.Helpers
                     Int32Rect.Empty,
                     BitmapSizeOptions.FromEmptyOptions());
         }
-        private Bitmap CopyFromBounds(int left, int top, int width, int height)
+        private async Task<Bitmap> CopyFromBounds(int left, int top, int width, int height)
         {
             Bitmap bmp = new Bitmap(width, height);          
             using (Graphics g = Graphics.FromImage(bmp))

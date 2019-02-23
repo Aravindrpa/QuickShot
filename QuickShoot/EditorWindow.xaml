@@ -14,7 +14,8 @@
         Background="Transparent"
         RenderOptions.BitmapScalingMode="HighQuality"
         RenderOptions.ClearTypeHint="Enabled"
-        RenderOptions.EdgeMode="Aliased"
+        VisualTextRenderingMode="ClearType"
+        VisualClearTypeHint="Enabled"
         Name="editor_window" 
         Loaded="editor_window_Loaded"
         >
@@ -25,15 +26,16 @@
             </Image.Effect>
         </Image>
         <Grid VerticalAlignment="Top" Margin="0" Background="Transparent" >
-            <Border Name="br_Close"  Background="Black" Margin="0,10,2,0" 
+            <Border Name="br_Close"  Background="Black" Margin="0,4,4,0" 
                     HorizontalAlignment="Right"
                     VerticalAlignment="Top"
                     Height="90" Width="90" Opacity=".65"
                     BorderThickness="10" CornerRadius="25"
                     BorderBrush="Black"
+                    MouseDown="lbl_Close_MouseDown"
                     >
                 <Label Name="lbl_Close" MouseDown="lbl_Close_MouseDown" 
-                       Content="X" FontSize="48" Background="Black" 
+                       Content="X" FontSize="45" Background="Black" 
                    Foreground="WhiteSmoke" 
                    HorizontalContentAlignment="Center" 
                    VerticalContentAlignment="Stretch"
@@ -232,8 +234,20 @@
             </Canvas>
             <!--</Border>-->
         </Grid>
-        <Grid Opacity="0" VerticalAlignment="Bottom" HorizontalAlignment="Left" Height="1000" Width="230" Background="AliceBlue">
-            <TreeView></TreeView>
+        <Grid Name="grid_Tree" Opacity="0" Background="Transparent" VerticalAlignment="Top" 
+              HorizontalAlignment="Left"
+              Margin="0,100,0,0">
+            <Border Name="br_Tree"  Background="Black" Margin="4,0,0,0" 
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Top"
+                    Height="600" Width="200" Opacity=".65"
+                    BorderThickness="10" CornerRadius="25"
+                    BorderBrush="Black"
+                    >
+                <TreeView Name="tv_Tree" 
+                      Background="Transparent">
+                </TreeView>
+            </Border>
         </Grid>
     </Grid>
 </Window>

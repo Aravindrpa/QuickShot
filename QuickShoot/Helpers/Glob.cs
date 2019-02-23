@@ -13,5 +13,6 @@ namespace QuickShoot.Helpers
         public static EditorWindow editorWindow { get; set; }
         public static FolderManager folderManager { get; set; }
         public static Animate Animate { get; set; }
+        public static ScreenShot ScreenShot { get; set; }
     }
 }
