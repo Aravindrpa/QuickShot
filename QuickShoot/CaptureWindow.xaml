@@ -5,7 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:QuickShoot"
         mc:Ignorable="d"
-        Title="CaptureWindow" Height="450" Width="800"
+        Title="CaptureWindow" 
+        Height="450" Width="800"
         Name="capture_window"
         WindowState="Maximized"
         WindowStyle="None"
@@ -14,7 +15,7 @@
         Background="Transparent"
         Topmost="True">
     <Grid Name="grid_Base">
-        <Image Name="img_Back"></Image>
+        <Image Name="img_Back" Opacity="0"></Image>
         <Canvas  Name="canvas_Draw" MouseDown="canvas_Draw_MouseDown" 
                  MouseMove="canvas_Draw_MouseMove"
                  MouseUp="canvas_Draw_MouseUp">

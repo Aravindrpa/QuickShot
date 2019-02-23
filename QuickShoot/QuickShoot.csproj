@@ -78,6 +78,7 @@
     </Compile>
     <Compile Include="Helpers\Animate.cs" />
     <Compile Include="Helpers\Config.cs" />
+    <Compile Include="Helpers\FolderManager.cs" />
     <Compile Include="Helpers\Glob.cs" />
     <Compile Include="Helpers\GlobalKeyboardHook.cs" />
     <Compile Include="Helpers\ScreenShot.cs" />

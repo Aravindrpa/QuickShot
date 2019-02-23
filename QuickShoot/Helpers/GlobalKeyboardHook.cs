@@ -178,6 +178,7 @@ namespace QuickShoot.Helpers
         //const int VkRwin = 0x5c;
         //const int VkTab = 0x09;
         public const int VkEscape = 27;
+        public const int VkReturn = 13;
         //const int VkControl = 0x11;
         public const int KfAltdown = 0x2000;
         public const int LlkhfAltdown = (KfAltdown >> 8);

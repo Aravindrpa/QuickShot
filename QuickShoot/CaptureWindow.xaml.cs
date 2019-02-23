@@ -62,11 +62,12 @@ namespace QuickShoot
             canvas_Draw.Children.Add(br);
         }
 
+        //Control Event Handlers
         private void canvas_Draw_MouseDown(object sender, MouseButtonEventArgs e)
         {
             if (e.ButtonState == MouseButtonState.Pressed)
             {
-                startPoint = e.GetPosition(this);
+                startPoint = Mouse.GetPosition(canvas_Draw); //e.GetPosition(this);
                 Canvas.SetLeft(br, startPoint.X - brThickness);
                 Canvas.SetTop(br, startPoint.Y - brThickness);
             }
@@ -77,49 +78,68 @@ namespace QuickShoot
             {
                 double wid = 0;
                 double hei = 0;
-                if (e.GetPosition(this).X < startPoint.X)
+                var pointNow = Mouse.GetPosition(canvas_Draw);//e.GetPosition(this);
+                if (pointNow.X < startPoint.X)
                 {
-                    wid = startPoint.X - e.GetPosition(this).X;
-                    Canvas.SetLeft(br, e.GetPosition(this).X - brThickness);
+                    wid = startPoint.X - pointNow.X;
+                    Canvas.SetLeft(br, pointNow.X - brThickness);
                 }
                 else
-                    wid = e.GetPosition(this).X - startPoint.X;
+                    wid = pointNow.X - startPoint.X;
 
-                if (e.GetPosition(this).Y < startPoint.Y)
+                if (pointNow.Y < startPoint.Y)
                 {
-                    hei = startPoint.Y - e.GetPosition(this).Y;
-                    Canvas.SetTop(br, e.GetPosition(this).Y - brThickness);
+                    hei = startPoint.Y - pointNow.Y;
+                    Canvas.SetTop(br, pointNow.Y - brThickness);
                 }
                 else
-                    hei = e.GetPosition(this).Y - startPoint.Y;
+                    hei = pointNow.Y - startPoint.Y;
 
                 rect.Width = wid;
                 rect.Height = hei;
             }
         }
-
         private void canvas_Draw_MouseUp(object sender, MouseButtonEventArgs e)
         {
             int l = 0;
             int t = 0;
+            int l1 = 0;
+            int t1 = 0;
             int wid = 0;
             int hei = 0;
 
             //CORRECT DPI again 
-
             ScreenShot.TransformToPixels(
-                Canvas.GetLeft(br) + brThickness,
-                Canvas.GetTop(br) + brThickness
+                //Canvas.GetLeft(br) + brThickness-3,
+                //Canvas.GetTop(br) + brThickness-3
+                startPoint.X - 3,
+                startPoint.Y - 3
                 , out l, out t);
 
-            wid = (int)rect.Width;
-            hei = (int)rect.Height;
+            var p = Mouse.GetPosition(canvas_Draw);
+            ScreenShot.TransformToPixels(
+                p.X - 3,
+                p.Y - 3
+                , out l1, out t1);
 
+            wid = l1 - l;//Including the stroke thickness//(int)rect.Width;
+            hei = t1 - t;//(int)rect.Height;
             if (wid <= 0 || hei <= 0) //take the whole screen if it was just a click
             {
-                l = 0; t = 0;
-                wid = screenWidthdpi;
-                hei = screenHeightdpi;
+                
+                if (wid < -10 || hei < -10) // if it was a reverse draw
+                {
+                    wid = l - l1;
+                    hei = t - t1;
+                    l = l1;
+                    t = t1; //now that rectangle is inverted, make start point as endponit
+                }
+                else
+                {
+                    l = 0; t = 0;
+                    wid = screenWidthdpi;
+                    hei = screenHeightdpi;
+                }
             }
 
             rect.Width = 0;
@@ -127,8 +147,8 @@ namespace QuickShoot
 
             this.Hide();
 
-            EditorWindow win = new EditorWindow(l,t,wid,hei);
-            win.Show();
+            Glob.editorWindow = new EditorWindow(l,t,wid,hei);
+            Glob.editorWindow.Show();
 
             this.Close();
 

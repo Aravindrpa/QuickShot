@@ -28,22 +28,26 @@ namespace QuickShoot
         {
             InitializeComponent();
 
-            Glob.captureWindow = new CaptureWindow();
-
             Glob.Config = new Config();
             if(String.IsNullOrEmpty(Glob.Config.ImageStorePath))//Set default save path
                 Glob.Config.ImageStorePath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\QuickShot";
 
+            Glob.captureWindow = new CaptureWindow();
+            Glob.folderManager = new FolderManager();
+            Glob.Animate = new Animate();
+            Glob.Config.SelectedBrush = System.Windows.Media.Brushes.Red;
+
             this.Left = System.Windows.SystemParameters.PrimaryScreenWidth - 150;
             this.Top = System.Windows.SystemParameters.PrimaryScreenHeight - 150;
 
-            Animate.Breath(this);
+            Glob.Animate.Breath(this);
 
             //#### Start key hook
             hookPrntScr = new GlobalKeyboardHook();
             hookPrntScr.KeyboardPressed += HookPrntScr_KeyboardPressed;
         }
 
+        //Hook Event
         private void HookPrntScr_KeyboardPressed(object sender, GlobalKeyboardHookEventArgs e)
         {
             if (e.KeyboardState == GlobalKeyboardHook.KeyboardState.KeyDown)
@@ -65,10 +69,20 @@ namespace QuickShoot
                                     win.Close();
                         }
                         break;
+                    case (GlobalKeyboardHook.VkReturn):
+                        foreach (Window win in Application.Current.Windows)
+                        {
+                            if (win.Name == "editor_window")
+                                if (win.IsActive) //Not gonna be null if active
+                                {
+                                    Glob.editorWindow.SaveAndClose();
+                                }
+                        }
+                        break;
                 }
             }
         }
-
+        //Control Event Handlers
         private void grid_Clear_MouseMove(object sender, MouseEventArgs e)
         {
             if (e.LeftButton == MouseButtonState.Pressed)

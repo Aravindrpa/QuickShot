@@ -10,5 +10,8 @@ namespace QuickShoot.Helpers
     {
         public static Config Config { get; set; }
         public static CaptureWindow captureWindow { get; set; }
+        public static EditorWindow editorWindow { get; set; }
+        public static FolderManager folderManager { get; set; }
+        public static Animate Animate { get; set; }
     }
 }
