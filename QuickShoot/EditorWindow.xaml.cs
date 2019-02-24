@@ -224,7 +224,7 @@ namespace QuickShoot
                         effect.ShadowDepth = 1;
                         effect.BlurRadius = 3;
                         label.Effect = effect;
-                        label.Padding = new Thickness(5,5,5,5);
+                        //label.Padding = new Thickness(5,5,5,5);
                         label.BorderThickness = new Thickness(0);
                         label.FontSize = 18;
                         Canvas.SetLeft(label, startPoint.X);
