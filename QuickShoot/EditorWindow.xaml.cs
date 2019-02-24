@@ -97,9 +97,9 @@ namespace QuickShoot
                     lbl_T.Background = Brushes.Black;
                     lbl_LN.Background = Brushes.Black;
                     lbl_SQ.Background = Brushes.Green;
-                    //Glob.Animate.Breath(br_T);
-                    //Glob.Animate.Breath(br_LN);
-                    //Glob.Animate.StopBreath(br_SQ);
+                    Glob.Animate.Breath(br_T);
+                    Glob.Animate.Breath(br_LN);
+                    Glob.Animate.StopBreath(br_SQ);
                     break;
                 case (DShapes.Line):
                     br_T.BorderBrush = Brushes.Black;
@@ -108,9 +108,9 @@ namespace QuickShoot
                     lbl_T.Background = Brushes.Black;
                     lbl_LN.Background = Brushes.Green;
                     lbl_SQ.Background = Brushes.Black;
-                    //Glob.Animate.Breath(br_T);
-                    //Glob.Animate.Breath(br_SQ);
-                    //Glob.Animate.StopBreath(br_LN);
+                    Glob.Animate.Breath(br_T);
+                    Glob.Animate.Breath(br_SQ);
+                    Glob.Animate.StopBreath(br_LN);
                     break;
                 case (DShapes.Text):
                     br_T.BorderBrush = Brushes.Green;
@@ -119,9 +119,9 @@ namespace QuickShoot
                     lbl_T.Background = Brushes.Green;
                     lbl_LN.Background = Brushes.Black;
                     lbl_SQ.Background = Brushes.Black;
-                    //Glob.Animate.Breath(br_SQ);
-                    //Glob.Animate.Breath(br_LN);
-                    //Glob.Animate.StopBreath(br_T);
+                    Glob.Animate.Breath(br_SQ);
+                    Glob.Animate.Breath(br_LN);
+                    Glob.Animate.StopBreath(br_T);
                     break;
             }
         }
@@ -176,6 +176,21 @@ namespace QuickShoot
             }
         }
 
+        //Window load
+        private void editor_window_Loaded(object sender, RoutedEventArgs e)
+        {
+            SetShape(DShapes.Rectangle);
+            SetColor(DColors.Green);
+            //Glob.Animate.Breath(lbl_FileName);
+            //Glob.Animate.Breath(br_Close);
+
+            textb_FileName.Text = DateTime.Now.ToString("yyyyMMddHHmmssffff");
+            textb_FileName.SelectAll();
+            Keyboard.Focus(textb_FileName);
+
+            img_Blur.Source = img_BlurAsync.Result;
+            img_Edit.Source = img_EditAsync.Result;
+        }
 
         //Control Event Handlers
         private void lbl_Close_MouseDown(object sender, MouseButtonEventArgs e)
@@ -282,21 +297,7 @@ namespace QuickShoot
         private void lbl_Save_MouseDown(object sender, MouseButtonEventArgs e)
         {
             SaveAndClose();
-        }
-        private void editor_window_Loaded(object sender, RoutedEventArgs e)
-        {
-            SetShape(DShapes.Rectangle);
-            SetColor(DColors.Green);
-            Glob.Animate.Breath(lbl_FileName);
-            //Glob.Animate.Breath(br_Close);
-
-            textb_FileName.Text = DateTime.Now.ToString("yyyyMMddHHmmssffff");
-            textb_FileName.SelectAll();
-            Keyboard.Focus(textb_FileName);
-
-            img_Blur.Source = img_BlurAsync.Result;
-            img_Edit.Source = img_EditAsync.Result;
-        }
+        }       
         private void lbl_SQ_MouseDown(object sender, MouseButtonEventArgs e)
         {
             SetShape(DShapes.Rectangle);

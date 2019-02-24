@@ -15,7 +15,8 @@
         WindowState="Normal"
         ResizeMode="NoResize"
         WindowStartupLocation="Manual"
-        Topmost="False">
+        Topmost="False"
+        Closed="Main_Window_Closed">
     <Grid Name="grid_Base" Background="Transparent">
         <Grid Name="grid_Clear"  MouseUp="grid_Clear_MouseUp" MouseMove="grid_Clear_MouseMove" Margin="30,30,30,40" Background="White">
             <Grid.Effect>

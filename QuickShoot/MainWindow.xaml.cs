@@ -115,5 +115,9 @@ namespace QuickShoot
 
             isDragging = false;
         }
+        private void Main_Window_Closed(object sender, EventArgs e)
+        {
+            Application.Current.Shutdown(); //make sure when this is closed, app is closed as well
+        }
     }
 }
