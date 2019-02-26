@@ -12,15 +12,17 @@
         WindowStyle="None"
         AllowsTransparency="True"
         Background="Transparent"
-        RenderOptions.BitmapScalingMode="HighQuality"
-        RenderOptions.ClearTypeHint="Enabled"
-        VisualTextRenderingMode="ClearType"
-        VisualClearTypeHint="Enabled"
         Name="editor_window" 
         Loaded="editor_window_Loaded"
         >
+    <!--RenderOptions.BitmapScalingMode="HighQuality"
+        RenderOptions.ClearTypeHint="Enabled"
+        VisualTextRenderingMode="ClearType"
+        VisualClearTypeHint="Enabled"-->
     <Grid Background="Gray" >
-        <Image Name="img_Blur" Opacity=".9">
+        <Image Name="img_Blur" Opacity="1"
+               RenderOptions.EdgeMode="Aliased"
+               RenderOptions.BitmapScalingMode="LowQuality">
             <Image.Effect>
                 <BlurEffect Radius="9"></BlurEffect>
             </Image.Effect>
@@ -58,6 +60,22 @@
                    FontWeight="Bold"
                    ></Label>
             </Border>
+            <Border Name="br_bac" Background="Black" 
+                    HorizontalAlignment="Right" 
+                    VerticalAlignment="Top"
+                    Height="50" Width="576" Opacity=".65"
+                    BorderThickness="6" CornerRadius="15"
+                    BorderBrush="Green"
+                    Margin="0,50,348,0"
+                    >
+                <Label Name="lbl_bac" Content="" FontSize="22" 
+                   Background="Green" 
+                   Foreground="White" 
+                   HorizontalContentAlignment="Center" 
+                   VerticalContentAlignment="Stretch"
+                   FontWeight="Bold"
+                   ></Label>
+            </Border>
             <Border VerticalAlignment="Top" HorizontalAlignment="Right" 
                     Height="50" Width="400" 
                     Opacity=".65"
@@ -65,7 +83,7 @@
                     BorderBrush="Transparent"
                     Margin="0,50,350,0"
                     >
-                <TextBox Name="textb_FileName" Background="Transparent" FontSize="22" FontWeight="Bold">
+                <TextBox Name="textb_FileName" Background="Transparent" FontSize="22" FontWeight="Bold" Margin="-10,0,0,0">
                 </TextBox>
             </Border>
             <Border Background="Transparent" 
@@ -76,11 +94,11 @@
                 BorderBrush="Transparent"
                 Margin="0,40,750,0"
                     >
-                <Label x:Name="lbl_FileName" Content="File Name : " FontWeight="Bold" FontSize="28" 
+                <Label x:Name="lbl_FileName" Content="File Name : " FontWeight="Bold" FontSize="25" 
                     Background="Transparent" 
-                    Foreground="Black" 
+                    Foreground="White" 
                     HorizontalContentAlignment="Center" 
-                    VerticalContentAlignment="Stretch"
+                    VerticalContentAlignment="Stretch" Margin="0,4,0,-6"
                    />
             </Border>
             <Border Background="Black" 
@@ -168,7 +186,7 @@
                     Margin="0,440,15,-380"
                     Name="br_Green"
                     >
-                    <Label Name="lbl_Green"
+                <Label Name="lbl_Green"
                    MouseDown="lbl_Green_MouseDown"
                    FontSize="15" 
                    Background="Green" 
@@ -187,7 +205,7 @@
                     Margin="0,480,15,-420"
                     Name="br_Oran"
                     >
-                        <Label Name="lbl_Oran"
+                <Label Name="lbl_Oran"
                    MouseDown="lbl_Oran_MouseDown"
                    FontSize="15" 
                    Background="Orange" 
@@ -206,7 +224,7 @@
                     Margin="0,520,15,-460"
                     Name="br_Yellow"
                     >
-                            <Label Name="lbl_Yellow"
+                <Label Name="lbl_Yellow"
                    MouseDown="lbl_Yellow_MouseDown"
                    FontSize="15" 
                    Background="Yellow" 
@@ -215,11 +233,16 @@
                    VerticalContentAlignment="Stretch"
                    FontWeight="Bold"
                    ></Label>
-</Border>
+            </Border>
         </Grid>
-        <Grid Name="grid_ImageCanvas" Margin="180,120,80,80"  Background="Transparent">
+        <Grid Name="grid_ImageCanvas" Margin="180,120,80,80"  Background="Transparent"
+                >
             <!--<Border>-->
-            <Image Name="img_Edit" Margin="0" >
+            <Image Name="img_Edit" Margin="0" 
+                   SnapsToDevicePixels="True"
+                   RenderOptions.EdgeMode="Aliased"
+                   RenderOptions.BitmapScalingMode="HighQuality"
+                   RenderOptions.ClearTypeHint="Enabled">
                 <Image.Effect>
                     <DropShadowEffect BlurRadius="30" Direction="270" 
                                       ShadowDepth="11" Opacity=".7">
@@ -230,7 +253,11 @@
                     MouseMove="canv_Img_MouseMove" MouseUp="canv_Img_MouseUp"
                     Background="Transparent"
                     Width="{Binding ElementName=grid_ImageCanvas, Path=ActualWidth}"
-                    Height="{Binding ElementName=grid_ImageCanvas, Path=ActualHeight}">
+                    Height="{Binding ElementName=grid_ImageCanvas, Path=ActualHeight}"
+                    SnapsToDevicePixels="True"
+                    RenderOptions.EdgeMode="Aliased"
+                    RenderOptions.BitmapScalingMode="HighQuality"
+                    RenderOptions.ClearTypeHint="Enabled">
             </Canvas>
             <!--</Border>-->
         </Grid>

@@ -14,5 +14,6 @@ namespace QuickShoot.Helpers
         public static FolderManager folderManager { get; set; }
         public static Animate Animate { get; set; }
         public static ScreenShot ScreenShot { get; set; }
+        public static System.Windows.Media.ImageSource Background { get; set; }
     }
 }

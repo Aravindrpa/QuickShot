@@ -29,12 +29,12 @@ namespace QuickShoot
         public DShapes shape { get; set; }
         public DColors color { get; set; }
 
-        private Task<BitmapSource> img_BlurAsync { get; set; }
+        //private Task<BitmapSource> img_BlurAsync { get; set; }
         private Task<BitmapSource> img_EditAsync { get; set; }
 
         public EditorWindow(int left, int top, int height, int width)
         {
-            img_BlurAsync = Glob.ScreenShot.Take();
+            //img_BlurAsync = Glob.ScreenShot.Take();
             img_EditAsync = Glob.ScreenShot.Take(left, top, height, width);
 
             InitializeComponent();
@@ -188,7 +188,8 @@ namespace QuickShoot
             textb_FileName.SelectAll();
             Keyboard.Focus(textb_FileName);
 
-            img_Blur.Source = img_BlurAsync.Result;
+            //img_Blur.Source = img_BlurAsync.Result;
+            img_Blur.Source = Glob.Background;
             img_Edit.Source = img_EditAsync.Result;
         }
 

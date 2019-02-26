@@ -48,8 +48,6 @@ namespace QuickShoot
             ScreenShot.TransformToPixels(screenWidth, screenHeight, out screenWidthdpi, out screenHeightdpi);
             brThickness = screenWidthdpi * 2; //to make sure the border has enough thickness to overflow the screen area while capturing
 
-            img_Back.Source = image.Result;
-
             br = new Border();
             br.BorderThickness = new Thickness(brThickness);
             br.BorderBrush = Brushes.White;
@@ -65,6 +63,8 @@ namespace QuickShoot
 
             br.Child = rect;
             canvas_Draw.Children.Add(br);
+            Glob.Background = image.Result;
+            img_Back.Source = Glob.Background;
         }
 
         //Control Event Handlers

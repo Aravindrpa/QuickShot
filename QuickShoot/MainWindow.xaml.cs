@@ -41,7 +41,7 @@ namespace QuickShoot
             this.Left = System.Windows.SystemParameters.PrimaryScreenWidth - 150;
             this.Top = System.Windows.SystemParameters.PrimaryScreenHeight - 150;
 
-            Glob.Animate.Breath(this);
+            //Glob.Animate.Breath(this);
 
             //#### Start key hook
             hookPrntScr = new GlobalKeyboardHook();
