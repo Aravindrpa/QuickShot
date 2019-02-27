@@ -30,20 +30,23 @@ namespace QuickShoot
         Rectangle rect;
         Border br;
 
+        Task<System.Drawing.Bitmap> task;
+
         int brThickness = 0;
 
         public CaptureWindow()
         {
-
+            task = Glob.ScreenShot.TakeBitmap();
             InitializeComponent();
         }
 
         private void capture_window_Loaded(object sender, RoutedEventArgs e)
         {
-            var image = Glob.ScreenShot.Take();
             startPoint = new Point();
             br = new Border();
             rect = new Rectangle();
+            Glob.BMP = task.Result;
+            var anotherTask = Glob.ScreenShot.ConvertBmpToSource(Glob.BMP);
 
             ScreenShot.TransformToPixels(screenWidth, screenHeight, out screenWidthdpi, out screenHeightdpi);
             brThickness = screenWidthdpi * 2; //to make sure the border has enough thickness to overflow the screen area while capturing
@@ -63,7 +66,7 @@ namespace QuickShoot
 
             br.Child = rect;
             canvas_Draw.Children.Add(br);
-            Glob.Background = image.Result;
+            Glob.Background = anotherTask.Result;
             img_Back.Source = Glob.Background;
         }
 

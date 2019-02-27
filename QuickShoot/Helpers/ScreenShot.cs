@@ -30,6 +30,37 @@ namespace QuickShoot.Helpers
             var bmp = await CopyFromBounds(left, top, width, height);
             return await ConvertBmpToSource(bmp);
         }
+        public async Task<Bitmap> TakeBitmap()
+        {
+            double screenLeft = SystemParameters.VirtualScreenLeft;
+            double screenTop = SystemParameters.VirtualScreenTop;
+            double screenWidth = SystemParameters.VirtualScreenWidth;
+            double screenHeight = SystemParameters.VirtualScreenHeight;
+            int screenWidthdpi = 0;
+            int screenHeightdpi = 0;
+            TransformToPixels(screenWidth, screenHeight, out screenWidthdpi, out screenHeightdpi);
+
+            return await CopyFromBounds((int)screenLeft, (int)screenTop, screenWidthdpi, screenHeightdpi);
+        }
+
+        public async Task<Bitmap> Crop(Bitmap bmp,int x1, int y1, int width, int height)
+        {
+            Rectangle cropRect = new Rectangle(x1, y1, width, height);
+            return await Crop(bmp, cropRect);
+        }
+        public async Task<Bitmap> Crop(Bitmap bmp, Rectangle rect)
+        {
+            Bitmap target = new Bitmap(rect.Width, rect.Height);
+            using (Graphics g = Graphics.FromImage(target))
+            {
+                g.DrawImage(bmp,
+                    new Rectangle(0, 0, target.Width, target.Height),
+                    rect,
+                    GraphicsUnit.Pixel);
+            }
+            return target;
+        }
+
         public async void TakeAndSave(int left, int top, int width, int height,string path)
         {
             Bitmap bmp = await CopyFromBounds(left, top, width, height);
@@ -67,7 +98,7 @@ namespace QuickShoot.Helpers
 
             bmp.Save(path, System.Drawing.Imaging.ImageFormat.Png);
         }
-        private async Task<BitmapSource> ConvertBmpToSource(Bitmap bmp)
+        public async Task<BitmapSource> ConvertBmpToSource(Bitmap bmp)
         {
             return Imaging.CreateBitmapSourceFromHBitmap(
                     bmp.GetHbitmap(),

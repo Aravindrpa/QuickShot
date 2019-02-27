@@ -15,5 +15,7 @@ namespace QuickShoot.Helpers
         public static Animate Animate { get; set; }
         public static ScreenShot ScreenShot { get; set; }
         public static System.Windows.Media.ImageSource Background { get; set; }
+        public static System.Drawing.Bitmap BMP { get; set; }//test
+
     }
 }

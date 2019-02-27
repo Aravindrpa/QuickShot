@@ -18,7 +18,7 @@
         RenderOptions.EdgeMode="Aliased"
         Loaded="capture_window_Loaded">
     <Grid Name="grid_Base">
-        <Image Name="img_Back" Opacity="0"></Image>
+        <Image Name="img_Back" Opacity="1"></Image>
         <Canvas  Name="canvas_Draw" MouseDown="canvas_Draw_MouseDown" 
                  MouseMove="canvas_Draw_MouseMove"
                  MouseUp="canvas_Draw_MouseUp">

@@ -1,6 +1,7 @@
 ﻿using QuickShoot.Helpers;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -28,15 +29,16 @@ namespace QuickShoot
         public Border br { get; set; }
         public DShapes shape { get; set; }
         public DColors color { get; set; }
+        public string FileName { get; set; }
 
         //private Task<BitmapSource> img_BlurAsync { get; set; }
-        private Task<BitmapSource> img_EditAsync { get; set; }
+        private Task<System.Drawing.Bitmap> img_EditAsync { get; set; }
 
-        public EditorWindow(int left, int top, int height, int width)
+        public EditorWindow(int left, int top, int width, int height)
         {
             //img_BlurAsync = Glob.ScreenShot.Take();
-            img_EditAsync = Glob.ScreenShot.Take(left, top, height, width);
-
+            //img_EditAsync = Glob.ScreenShot.Take(left, top, height, width);
+            img_EditAsync = Glob.ScreenShot.Crop(Glob.BMP, left, top, width, height);
             InitializeComponent();
 
         }
@@ -69,9 +71,13 @@ namespace QuickShoot
         public void SaveAndClose()
         {
             Glob.folderManager.DTimer.Start();
-            var fileName = DateTime.Now.ToString("yyyyMMddHHmmssffff") + ".png";
+
+            var fileName = "test.png";
             if (!string.IsNullOrEmpty(textb_FileName.Text))
-                fileName = textb_FileName.Text + ".png";
+                if (!textb_FileName.Text.Contains(this.FileName))
+                    fileName = this.FileName + "-" + textb_FileName.Text + ".png";
+                else
+                    fileName = textb_FileName.Text + ".png";
 
             var p = img_Edit.PointToScreen(new Point());
             int wid = 0;
@@ -83,6 +89,8 @@ namespace QuickShoot
                 wid, hei,
                 Glob.folderManager.GetCurrentPath() + "\\" + fileName
                 );
+
+            //CreateSaveBitmap(canv_Img, Glob.folderManager.GetCurrentPath() + "\\" + fileName);
 
             this.Close();
         }
@@ -97,9 +105,12 @@ namespace QuickShoot
                     lbl_T.Background = Brushes.Black;
                     lbl_LN.Background = Brushes.Black;
                     lbl_SQ.Background = Brushes.Green;
-                    Glob.Animate.Breath(br_T);
-                    Glob.Animate.Breath(br_LN);
-                    Glob.Animate.StopBreath(br_SQ);
+                    if (Glob.Config.EnableAnimations)
+                    {
+                        Glob.Animate.Breath(br_T);
+                        Glob.Animate.Breath(br_LN);
+                        Glob.Animate.StopBreath(br_SQ);
+                    }
                     break;
                 case (DShapes.Line):
                     br_T.BorderBrush = Brushes.Black;
@@ -108,9 +119,12 @@ namespace QuickShoot
                     lbl_T.Background = Brushes.Black;
                     lbl_LN.Background = Brushes.Green;
                     lbl_SQ.Background = Brushes.Black;
-                    Glob.Animate.Breath(br_T);
-                    Glob.Animate.Breath(br_SQ);
-                    Glob.Animate.StopBreath(br_LN);
+                    if (Glob.Config.EnableAnimations)
+                    {
+                        Glob.Animate.Breath(br_T);
+                        Glob.Animate.Breath(br_SQ);
+                        Glob.Animate.StopBreath(br_LN);
+                    }
                     break;
                 case (DShapes.Text):
                     br_T.BorderBrush = Brushes.Green;
@@ -119,9 +133,12 @@ namespace QuickShoot
                     lbl_T.Background = Brushes.Green;
                     lbl_LN.Background = Brushes.Black;
                     lbl_SQ.Background = Brushes.Black;
-                    Glob.Animate.Breath(br_SQ);
-                    Glob.Animate.Breath(br_LN);
-                    Glob.Animate.StopBreath(br_T);
+                    if (Glob.Config.EnableAnimations)
+                    {
+                        Glob.Animate.Breath(br_SQ);
+                        Glob.Animate.Breath(br_LN);
+                        Glob.Animate.StopBreath(br_T);
+                    }
                     break;
             }
         }
@@ -135,10 +152,13 @@ namespace QuickShoot
                     br_Oran.BorderBrush = Brushes.Transparent;
                     br_Yellow.BorderBrush = Brushes.Transparent;
                     Glob.Config.SelectedBrush = Brushes.Red;
-                    Glob.Animate.StopBreath(br_Red);
-                    Glob.Animate.Breath(br_Green);
-                    Glob.Animate.Breath(br_Oran);
-                    Glob.Animate.Breath(br_Yellow);
+                    if (Glob.Config.EnableAnimations)
+                    {
+                        Glob.Animate.StopBreath(br_Red);
+                        Glob.Animate.Breath(br_Green);
+                        Glob.Animate.Breath(br_Oran);
+                        Glob.Animate.Breath(br_Yellow);
+                    }
                     break;
                 case (DColors.Green):
                     br_Red.BorderBrush = Brushes.Transparent;
@@ -146,10 +166,13 @@ namespace QuickShoot
                     br_Oran.BorderBrush = Brushes.Transparent;
                     br_Yellow.BorderBrush = Brushes.Transparent;
                     Glob.Config.SelectedBrush = Brushes.LimeGreen;
-                    Glob.Animate.Breath(br_Red);
-                    Glob.Animate.StopBreath(br_Green);
-                    Glob.Animate.Breath(br_Oran);
-                    Glob.Animate.Breath(br_Yellow);
+                    if (Glob.Config.EnableAnimations)
+                    {
+                        Glob.Animate.Breath(br_Red);
+                        Glob.Animate.StopBreath(br_Green);
+                        Glob.Animate.Breath(br_Oran);
+                        Glob.Animate.Breath(br_Yellow);
+                    }
                     break;
                 case (DColors.Orange):
                     br_Red.BorderBrush = Brushes.Transparent;
@@ -157,10 +180,13 @@ namespace QuickShoot
                     br_Oran.BorderBrush = Brushes.Black;
                     br_Yellow.BorderBrush = Brushes.Transparent;
                     Glob.Config.SelectedBrush = Brushes.Orange;
-                    Glob.Animate.Breath(br_Red);
-                    Glob.Animate.Breath(br_Green);
-                    Glob.Animate.StopBreath(br_Oran);
-                    Glob.Animate.Breath(br_Yellow);
+                    if (Glob.Config.EnableAnimations)
+                    {
+                        Glob.Animate.Breath(br_Red);
+                        Glob.Animate.Breath(br_Green);
+                        Glob.Animate.StopBreath(br_Oran);
+                        Glob.Animate.Breath(br_Yellow);
+                    }
                     break;
                 case (DColors.Yellow):
                     br_Red.BorderBrush = Brushes.Transparent;
@@ -168,29 +194,65 @@ namespace QuickShoot
                     br_Oran.BorderBrush = Brushes.Transparent;
                     br_Yellow.BorderBrush = Brushes.Black;
                     Glob.Config.SelectedBrush = Brushes.Yellow;
-                    Glob.Animate.Breath(br_Red);
-                    Glob.Animate.Breath(br_Green);
-                    Glob.Animate.Breath(br_Oran);
-                    Glob.Animate.StopBreath(br_Yellow);
+                    if (Glob.Config.EnableAnimations)
+                    {
+                        Glob.Animate.Breath(br_Red);
+                        Glob.Animate.Breath(br_Green);
+                        Glob.Animate.Breath(br_Oran);
+                        Glob.Animate.StopBreath(br_Yellow);
+                    }
                     break;
+            }
+        }
+
+        private void CreateSaveBitmap(Canvas canvas, string filename)
+        {
+            int wid = 0;int hei = 0;
+            //ScreenShot.TransformToPixels(canvas.ActualWidth, canvas.ActualHeight, out wid, out hei);
+            wid = (int)canvas.ActualWidth;
+            hei = (int)canvas.ActualHeight;
+            RenderTargetBitmap renderBitmap = new RenderTargetBitmap(
+             wid, hei,
+             96d, 96d, PixelFormats.Pbgra32);
+            // needed otherwise the image output is black
+            canvas.Measure(new Size(wid, hei));
+            canvas.Arrange(new Rect(new Size(wid, hei)));
+
+            //renderBitmap.Render(img);
+            renderBitmap.Render(canvas);
+
+            //JpegBitmapEncoder encoder = new JpegBitmapEncoder();
+            PngBitmapEncoder encoder = new PngBitmapEncoder();
+            encoder.Frames.Add(BitmapFrame.Create(renderBitmap));
+
+            using (FileStream file = File.Create(filename))
+            {
+                encoder.Save(file);
             }
         }
 
         //Window load
         private void editor_window_Loaded(object sender, RoutedEventArgs e)
         {
+            //img_Edit.Width = canv_Img.ActualWidth - 80;
+            //img_Edit.Height = canv_Img.ActualHeight - 80;
+
+            var convertTask = Glob.ScreenShot.ConvertBmpToSource(img_EditAsync.Result);
             SetShape(DShapes.Rectangle);
             SetColor(DColors.Green);
             //Glob.Animate.Breath(lbl_FileName);
             //Glob.Animate.Breath(br_Close);
-
-            textb_FileName.Text = DateTime.Now.ToString("yyyyMMddHHmmssffff");
+            this.FileName = DateTime.Now.ToString("yyyyMMddHHmmssff");
+            textb_FileName.Text = this.FileName;
             textb_FileName.SelectAll();
             Keyboard.Focus(textb_FileName);
 
             //img_Blur.Source = img_BlurAsync.Result;
-            img_Blur.Source = Glob.Background;
-            img_Edit.Source = img_EditAsync.Result;
+            img_Blur.Source = Glob.Background; //Glob.Background;
+            img_Edit.Source = convertTask.Result;
+            //ImageBrush ib = new ImageBrush();
+            //ib.ImageSource = convertTask.Result;
+            //canv_Img.Background = ib;
         }
 
         //Control Event Handlers
@@ -253,42 +315,47 @@ namespace QuickShoot
         }
         private void canv_Img_MouseMove(object sender, MouseEventArgs e)
         {
-            double wid = 0;
-            double hei = 0;
-            var pointNow = Mouse.GetPosition(canv_Img); // new Point(X, Y);
-
-            if (e.LeftButton == MouseButtonState.Pressed)
+            try
             {
-                switch (shape)
+                double wid = 0;
+                double hei = 0;
+                var pointNow = Mouse.GetPosition(canv_Img); // new Point(X, Y);
+
+                if (e.LeftButton == MouseButtonState.Pressed)
                 {
-                    case (DShapes.Rectangle):
-                        if (pointNow.X < startPoint.X)
-                        {
-                            wid = startPoint.X - pointNow.X;
-                            Canvas.SetLeft(br, pointNow.X);
-                        }
-                        else
-                            wid = pointNow.X - startPoint.X;
+                    switch (shape)
+                    {
+                        case (DShapes.Rectangle):
+                            if (pointNow.X < startPoint.X)
+                            {
+                                wid = startPoint.X - pointNow.X;
+                                Canvas.SetLeft(br, pointNow.X);
+                            }
+                            else
+                                wid = pointNow.X - startPoint.X;
 
-                        if (pointNow.Y < startPoint.Y)
-                        {
-                            hei = startPoint.Y - pointNow.Y;
-                            Canvas.SetTop(br, pointNow.Y);
-                        }
-                        else
-                            hei = pointNow.Y - startPoint.Y;
+                            if (pointNow.Y < startPoint.Y)
+                            {
+                                hei = startPoint.Y - pointNow.Y;
+                                Canvas.SetTop(br, pointNow.Y);
+                            }
+                            else
+                                hei = pointNow.Y - startPoint.Y;
 
-                        rect.Width = wid;
-                        rect.Height = hei;
-                        break;
+                            rect.Width = wid;
+                            rect.Height = hei;
+                            break;
 
-                    case (DShapes.Line):
-                        line.X2 = pointNow.X;
-                        line.Y2 = pointNow.Y;
-                        break;
+                        case (DShapes.Line):
+                            line.X2 = pointNow.X;
+                            line.Y2 = pointNow.Y;
+                            break;
+                    }
                 }
 
             }
+            catch
+            { }
         }
         private void canv_Img_MouseUp(object sender, MouseButtonEventArgs e)
         {

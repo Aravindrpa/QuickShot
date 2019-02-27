@@ -83,7 +83,7 @@
                     BorderBrush="Transparent"
                     Margin="0,50,350,0"
                     >
-                <TextBox Name="textb_FileName" Background="Transparent" FontSize="22" FontWeight="Bold" Margin="-10,0,0,0">
+                <TextBox Name="textb_FileName" Padding="3,2,3,2" Background="Transparent" Foreground="White" FontSize="22" FontWeight="Bold" Margin="-10,-3,0,-3">
                 </TextBox>
             </Border>
             <Border Background="Transparent" 
@@ -94,7 +94,7 @@
                 BorderBrush="Transparent"
                 Margin="0,40,750,0"
                     >
-                <Label x:Name="lbl_FileName" Content="File Name : " FontWeight="Bold" FontSize="25" 
+                <Label x:Name="lbl_FileName" Content="File Name : |" FontWeight="Bold" FontSize="25" 
                     Background="Transparent" 
                     Foreground="White" 
                     HorizontalContentAlignment="Center" 
@@ -238,7 +238,7 @@
         <Grid Name="grid_ImageCanvas" Margin="180,120,80,80"  Background="Transparent"
                 >
             <!--<Border>-->
-            <Image Name="img_Edit" Margin="0" 
+            <Image Name="img_Edit"                   
                    SnapsToDevicePixels="True"
                    RenderOptions.EdgeMode="Aliased"
                    RenderOptions.BitmapScalingMode="HighQuality"
@@ -249,15 +249,19 @@
                     </DropShadowEffect>
                 </Image.Effect>
             </Image>
+            <!--Margin="50,50,50,50"-->
             <Canvas Name="canv_Img"  Margin="0,0,0,0" MouseDown="canv_Img_MouseDown" 
                     MouseMove="canv_Img_MouseMove" MouseUp="canv_Img_MouseUp"
-                    Background="Transparent"
+                    Background="Transparent" 
                     Width="{Binding ElementName=grid_ImageCanvas, Path=ActualWidth}"
                     Height="{Binding ElementName=grid_ImageCanvas, Path=ActualHeight}"
                     SnapsToDevicePixels="True"
+                    ClipToBounds="True"
                     RenderOptions.EdgeMode="Aliased"
                     RenderOptions.BitmapScalingMode="HighQuality"
-                    RenderOptions.ClearTypeHint="Enabled">
+                    RenderOptions.ClearTypeHint="Enabled"
+                    >
+                
             </Canvas>
             <!--</Border>-->
         </Grid>

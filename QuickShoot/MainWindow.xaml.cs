@@ -36,7 +36,10 @@ namespace QuickShoot
             Glob.captureWindow = new CaptureWindow();
             Glob.folderManager = new FolderManager();
             Glob.Animate = new Animate();
+
+            //CONFIG
             Glob.Config.SelectedBrush = System.Windows.Media.Brushes.Red;
+            Glob.Config.EnableAnimations = true;
 
             this.Left = System.Windows.SystemParameters.PrimaryScreenWidth - 150;
             this.Top = System.Windows.SystemParameters.PrimaryScreenHeight - 150;
