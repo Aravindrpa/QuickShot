@@ -20,7 +20,7 @@ namespace QuickShoot
     /// <summary>
     /// Interaction logic for EditorWindow.xaml
     /// </summary>
-    public partial class EditorWindow : Window
+    public partial class EditorWindowLite : Window
     {
         public Point startPoint { get; set; }
         public Rectangle rect { get; set; }
@@ -34,23 +34,13 @@ namespace QuickShoot
         //private Task<BitmapSource> img_BlurAsync { get; set; }
         private Task<System.Drawing.Bitmap> img_EditAsync { get; set; }
 
-        public EditorWindow(int left, int top, int width, int height)
+        public EditorWindowLite(int left, int top, int width, int height)
         {
             //img_BlurAsync = Glob.ScreenShot.Take();
             //img_EditAsync = Glob.ScreenShot.Take(left, top, height, width);
             img_EditAsync = Glob.ScreenShot.Crop(Glob.BMP, left, top, width, height);
             InitializeComponent();
 
-            if (Glob.Config.EnableBlurEffect)
-            {
-                img_Blur.Opacity = 1;
-                blurEffect.Radius = 7;
-            }
-            else
-            {
-                img_Blur.Opacity = 0;
-                blurEffect.Radius = 0;
-            }
         }
 
         //ENUMS
@@ -256,10 +246,6 @@ namespace QuickShoot
             textb_FileName.Text = this.FileName;
             textb_FileName.SelectAll();
             Keyboard.Focus(textb_FileName);
-
-            //img_Blur.Source = img_BlurAsync.Result;
-            if(Glob.Config.EnableBlurEffect)
-                img_Blur.Source = Glob.Background; //Glob.Background;
 
             img_Edit.Source = convertTask.Result;
             //ImageBrush ib = new ImageBrush();

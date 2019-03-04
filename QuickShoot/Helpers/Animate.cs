@@ -16,25 +16,29 @@ namespace QuickShoot.Helpers
         public Dictionary<Control,Storyboard> ControlSBs { get; set; }
         public Dictionary<Border,Storyboard> BorderSBs { get; set; }
         public Dictionary<Window,Storyboard> WindowSBs { get; set; }
+        public Dictionary<DependencyObject, Storyboard> WindowsSBs { get; set; }
+    
+        public Storyboard SingleStoryBoard { get; set; }
 
         public Animate()
         {
             ControlSBs = new Dictionary<Control, Storyboard>();
             BorderSBs = new Dictionary<Border, Storyboard>();
             WindowSBs = new Dictionary<Window, Storyboard>();
+            WindowsSBs = new Dictionary<DependencyObject, Storyboard>();
 
         }
 
-        public void Breath(Window win)
+        public void Breath(DependencyObject item)
         {
-            StopBreath(win);
+            StopBreath(item);
             Storyboard sb = null;
-            if (WindowSBs.Keys.Contains(win))
-                sb = WindowSBs[win];
+            if (WindowsSBs.Keys.Contains(item))
+                sb = WindowsSBs[item];
             else
             {
                 sb = new Storyboard();
-                WindowSBs.Add(win, sb);
+                WindowsSBs.Add(item, sb);
             }
             durationMillli = 1300;
 
@@ -45,88 +49,42 @@ namespace QuickShoot.Helpers
             sb.Children.Add(da);
             sb.RepeatBehavior = RepeatBehavior.Forever;
 
-            //item.Opacity = 1;
-            win.Visibility = Visibility.Visible;
 
-            Storyboard.SetTarget(sb, win);
+            Storyboard.SetTarget(sb, item);
             Storyboard.SetTargetProperty(sb, new PropertyPath(Control.OpacityProperty));
 
             sb.Begin();
 
-            sb.Completed += delegate (object sender, EventArgs e)
-            {
-                win.Visibility = Visibility.Collapsed;
-            };
+            //sb.Completed += delegate (object sender, EventArgs e)
+            //{
+            //    win.Visibility = Visibility.Collapsed;
+            //};
 
         }
-        public void Breath(Border border)
+        
+        public async Task<Animate> InitiateBreath()
         {
-            StopBreath(border);
-            Storyboard sb = null;
-            if (BorderSBs.Keys.Contains(border))
-                sb = BorderSBs[border];
+            if (SingleStoryBoard != null)
+                SingleStoryBoard.Stop();
             else
-            {
-                sb = new Storyboard();
-                BorderSBs.Add(border, sb);
-            }
+                SingleStoryBoard = new Storyboard();
 
-            durationMillli = 1300;
-
-            var da = new DoubleAnimation(0, 1, duration: TimeSpan.FromMilliseconds(durationMillli));
+            var da = new DoubleAnimation(0, 1, duration: TimeSpan.FromMilliseconds(1300));
             da.EasingFunction = new QuadraticEase();
             da.AutoReverse = true;
 
-            sb.Children.Add(da);
-            sb.RepeatBehavior = RepeatBehavior.Forever;
+            SingleStoryBoard.Children.Add(da);
+            SingleStoryBoard.RepeatBehavior = RepeatBehavior.Forever;
 
-            //item.Opacity = 1;
-            border.Visibility = Visibility.Visible;
+            Storyboard.SetTargetProperty(SingleStoryBoard, new PropertyPath(Control.OpacityProperty));
 
-            Storyboard.SetTarget(sb, border);
-            Storyboard.SetTargetProperty(sb, new PropertyPath(Control.OpacityProperty));           
-
-            sb.Begin();
-
-            sb.Completed += delegate (object sender, EventArgs e)
-            {
-                border.Visibility = Visibility.Collapsed;
-            };
-
+            SingleStoryBoard.Begin();
+            return this;
         }
-        public void Breath(Control control)
+        public async Task<Animate> AddChild(DependencyObject item)
         {
-            StopBreath(control);
-            Storyboard sb = null;
-            if (ControlSBs.Keys.Contains(control))
-                sb = ControlSBs[control];
-            else
-            {
-                sb = new Storyboard();
-                ControlSBs.Add(control, sb);
-            }
-            durationMillli = 1300;
-
-            var da = new DoubleAnimation(0, 1, duration: TimeSpan.FromMilliseconds(durationMillli));
-            da.EasingFunction = new QuadraticEase();
-            da.AutoReverse = true;
-
-            sb.Children.Add(da);
-            sb.RepeatBehavior = RepeatBehavior.Forever;
-
-            //item.Opacity = 1;
-            control.Visibility = Visibility.Visible;
-
-            Storyboard.SetTarget(sb, control);
-            Storyboard.SetTargetProperty(sb, new PropertyPath(Control.OpacityProperty));
-
-            sb.Begin();
-
-            sb.Completed += delegate (object sender, EventArgs e)
-            {
-                control.Visibility = Visibility.Collapsed;
-            };
-
+            Storyboard.SetTarget(SingleStoryBoard, item);
+            return this;
         }
 
         public void FadeIn(Window win)
@@ -152,20 +110,10 @@ namespace QuickShoot.Helpers
             };
         }
 
-        public void StopBreath(Window win)
+        public void StopBreath(DependencyObject item)
         {
-            if(WindowSBs.Keys.Contains(win))
-                WindowSBs[win].Stop();
-        }
-        public void StopBreath(Border border)
-        {
-            if (BorderSBs.Keys.Contains(border))
-                BorderSBs[border].Stop();
-        }
-        public void StopBreath(Control control)
-        {
-            if (ControlSBs.Keys.Contains(control))
-                ControlSBs[control].Stop();
+            if(WindowsSBs.Keys.Contains(item))
+                WindowsSBs[item].Stop();
         }
     }
 }

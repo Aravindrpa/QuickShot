@@ -37,13 +37,19 @@ namespace QuickShoot
             Glob.folderManager = new FolderManager();
             Glob.Animate = new Animate();
 
+            //Glob.Animate.Breath(this);
+
             //CONFIG
             Glob.Config.SelectedBrush = System.Windows.Media.Brushes.Red;
             Glob.Config.EnableAnimations = true;
+            Glob.Config.EnableBlurEffect = true;
+            Glob.Config.EnableLiteMode = false;
+
 
             this.Left = System.Windows.SystemParameters.PrimaryScreenWidth - 150;
             this.Top = System.Windows.SystemParameters.PrimaryScreenHeight - 150;
 
+            //var t = Glob.Animate.InitiateBreath().Result;
             //Glob.Animate.Breath(this);
 
             //#### Start key hook
@@ -71,6 +77,9 @@ namespace QuickShoot
                             if (win.Name == "editor_window")
                                 if (win.IsActive)
                                     win.Close();
+                            if (win.Name == "editor_window_lite")
+                                if (win.IsActive)
+                                    win.Close();
                         }
                         break;
                     case (GlobalKeyboardHook.VkReturn):
@@ -80,6 +89,11 @@ namespace QuickShoot
                                 if (win.IsActive) //Not gonna be null if active
                                 {
                                     Glob.editorWindow.SaveAndClose();
+                                }
+                            if (win.Name == "editor_window_lite")
+                                if (win.IsActive) //Not gonna be null if active
+                                {
+                                    Glob.editorWindowLite.SaveAndClose();
                                 }
                         }
                         break;

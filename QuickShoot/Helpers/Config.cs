@@ -12,5 +12,7 @@ namespace QuickShoot.Helpers
         public string ImageStorePath { get; set; }
         public SolidColorBrush SelectedBrush { get; set; }
         public bool EnableAnimations { get; set; }
+        public bool EnableBlurEffect { get; set; }
+        public bool EnableLiteMode { get; set; }
     }
 }

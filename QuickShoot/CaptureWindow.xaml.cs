@@ -155,8 +155,16 @@ namespace QuickShoot
 
             this.Hide();
 
-            Glob.editorWindow = new EditorWindow(l,t,wid,hei);
-            Glob.editorWindow.Show();
+            if (Glob.Config.EnableLiteMode)
+            {
+                Glob.editorWindowLite = new EditorWindowLite(l, t, wid, hei);
+                Glob.editorWindowLite.Show();
+            }
+            else
+            {
+                Glob.editorWindow = new EditorWindow(l, t, wid, hei);
+                Glob.editorWindow.Show();
+            }
 
             this.Close();
 

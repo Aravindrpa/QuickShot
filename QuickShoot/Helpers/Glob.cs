@@ -11,6 +11,7 @@ namespace QuickShoot.Helpers
         public static Config Config { get; set; }
         public static CaptureWindow captureWindow { get; set; }
         public static EditorWindow editorWindow { get; set; }
+        public static EditorWindowLite editorWindowLite { get; set; }
         public static FolderManager folderManager { get; set; }
         public static Animate Animate { get; set; }
         public static ScreenShot ScreenShot { get; set; }
