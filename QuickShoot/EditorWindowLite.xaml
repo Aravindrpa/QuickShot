@@ -37,6 +37,22 @@
                    FontWeight="Bold"
                    ></Label>
             </Border>
+            <Border Name="br_Copy" Background="Black" 
+                    HorizontalAlignment="Right" 
+                    VerticalAlignment="Top"
+                    Height="50" Width="93" Opacity=".65"
+                    BorderThickness="6" CornerRadius="15"
+                    BorderBrush="Green"
+                    Margin="0,50,150,0"
+                    >
+                <Label Name="lbl_Copy" MouseDown="lbl_Copy_MouseDown" Content="Copy" FontSize="22" 
+                   Background="Green" 
+                   Foreground="White" 
+                   HorizontalContentAlignment="Center" 
+                   VerticalContentAlignment="Stretch"
+                   FontWeight="Bold"
+                   ></Label>
+            </Border>
             <Border Name="br_bac" Background="Black" 
                     HorizontalAlignment="Right" 
                     VerticalAlignment="Top"

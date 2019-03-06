@@ -57,6 +57,7 @@ namespace QuickShoot
             hookPrntScr.KeyboardPressed += HookPrntScr_KeyboardPressed;
         }
 
+        bool ControlPressed = false;
         //Hook Event
         private void HookPrntScr_KeyboardPressed(object sender, GlobalKeyboardHookEventArgs e)
         {
@@ -65,9 +66,9 @@ namespace QuickShoot
                 switch (e.KeyboardData.VirtualCode)
                 {
                     case (GlobalKeyboardHook.VkSnapshot):
-                        Glob.captureWindow = new CaptureWindow();
-                        Glob.captureWindow.Show();
-                        break;
+                            Glob.captureWindow = new CaptureWindow();
+                            Glob.captureWindow.Show();                       
+                        break;                      
                     case (GlobalKeyboardHook.VkEscape):
                         foreach (Window win in Application.Current.Windows)
                         {
@@ -95,6 +96,28 @@ namespace QuickShoot
                                 {
                                     Glob.editorWindowLite.SaveAndClose();
                                 }
+                        }
+                        break;
+                    case(162): // this is when control pressed
+                        ControlPressed = true;
+                        break;
+                    case (67)://this is 'C' - and it needs to work only if control was pressed before
+                        if (ControlPressed)
+                        {
+                            foreach (Window win in Application.Current.Windows)
+                            {
+                                if (win.Name == "editor_window")
+                                    if (win.IsActive) //Not gonna be null if active
+                                    {
+                                        Glob.editorWindow.CopyImage();
+                                    }
+                                if (win.Name == "editor_window_lite")
+                                    if (win.IsActive) //Not gonna be null if active
+                                    {
+                                        Glob.editorWindowLite.CopyImage();
+                                    }
+                            }
+                            ControlPressed = false;//release
                         }
                         break;
                 }

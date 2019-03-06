@@ -94,6 +94,20 @@ namespace QuickShoot
 
             this.Close();
         }
+        public void CopyImage()
+        {
+            var p = img_Edit.PointToScreen(new Point());
+            int wid = 0;
+            int hei = 0;
+            ScreenShot.TransformToPixels(img_Edit.ActualWidth, img_Edit.ActualHeight, out wid, out hei);
+            var bmp = Glob.ScreenShot.CopyFromBounds(
+                (int)p.X,
+                (int)p.Y,
+                wid, hei);
+            var task = Glob.ScreenShot.ConvertBmpToSource(bmp.Result);
+            Clipboard.SetImage(task.Result);
+            this.Close();
+        }
         private void ToggleButton(DShapes shape)
         {
             switch (shape)
@@ -391,6 +405,10 @@ namespace QuickShoot
         private void lbl_Yellow_MouseDown(object sender, MouseButtonEventArgs e)
         {
             SetColor(DColors.Yellow);
+        }
+        private void lbl_Copy_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            CopyImage();
         }
     }
 }

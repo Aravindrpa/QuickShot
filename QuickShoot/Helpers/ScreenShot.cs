@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Interop;
@@ -60,11 +62,22 @@ namespace QuickShoot.Helpers
             }
             return target;
         }
+        public async Task<Bitmap> MergeAllBitmaps(Bitmap bmp1, Bitmap bmp2)
+        {
+            Bitmap result = new Bitmap(Math.Max(bmp1.Width, bmp2.Width),
+                              Math.Max(bmp1.Height, bmp2.Height));
+            using (Graphics g = Graphics.FromImage(result))
+            {
+                g.DrawImage(bmp2, System.Drawing.Point.Empty);
+                g.DrawImage(bmp1, System.Drawing.Point.Empty);
+            }
+            return result;
+
+        }
 
         public async void TakeAndSave(int left, int top, int width, int height,string path)
         {
             Bitmap bmp = await CopyFromBounds(left, top, width, height);
-
             //Attach shadow try1
             //Bitmap shadow = (Bitmap)bmp.Clone();
 
@@ -106,7 +119,19 @@ namespace QuickShoot.Helpers
                     Int32Rect.Empty,
                     BitmapSizeOptions.FromEmptyOptions());
         }
-        private async Task<Bitmap> CopyFromBounds(int left, int top, int width, int height)
+        public Bitmap BitmapFromSource(BitmapSource bitmapsource)
+        {
+            Bitmap bitmap;
+            using (var outStream = new MemoryStream())
+            {
+                BitmapEncoder enc = new BmpBitmapEncoder();
+                enc.Frames.Add(BitmapFrame.Create(bitmapsource));
+                enc.Save(outStream);
+                bitmap = new Bitmap(outStream);
+            }
+            return bitmap;
+        }
+        public async Task<Bitmap> CopyFromBounds(int left, int top, int width, int height)
         {
             Bitmap bmp = new Bitmap(width, height);          
             using (Graphics g = Graphics.FromImage(bmp))

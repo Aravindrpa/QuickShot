@@ -93,15 +93,40 @@ namespace QuickShoot
             int wid = 0;
             int hei = 0;
             ScreenShot.TransformToPixels(img_Edit.ActualWidth, img_Edit.ActualHeight, out wid, out hei);
-            new ScreenShot().TakeAndSave(
+            var bmp = Glob.ScreenShot.CopyFromBounds(
                 (int)p.X,
                 (int)p.Y,
-                wid, hei,
-                Glob.folderManager.GetCurrentPath() + "\\" + fileName
-                );
+                wid, hei);
+            var task = Glob.ScreenShot.ConvertBmpToSource(bmp.Result);
+            bmp.Result.Save(Glob.folderManager.GetCurrentPath() + "\\" + fileName);
+            Clipboard.SetImage(task.Result);
+            //new ScreenShot().TakeAndSave(
+            //    (int)p.X,
+            //    (int)p.Y,
+            //    wid, hei,
+            //    Glob.folderManager.GetCurrentPath() + "\\" + fileName
+            //    );
 
-            //CreateSaveBitmap(canv_Img, Glob.folderManager.GetCurrentPath() + "\\" + fileName);
-
+            //img_Edit.Source = CanvasImage(canv_Img);
+            //ImageSource ff = CanvasImage(canv_Img);
+            //System.Threading.Thread.Sleep(1000);
+            //var dd = Glob.ScreenShot.BitmapFromSource((BitmapSource)ff);
+            //var bmp1 = Glob.ScreenShot.MergeAllBitmaps(Glob.BMP,dd).Result;
+            //bmp1.Save(Glob.folderManager.GetCurrentPath() + "\\can-" + fileName);
+            //this.Close();
+        }
+        public void CopyImage()
+        {
+            var p = img_Edit.PointToScreen(new Point());
+            int wid = 0;
+            int hei = 0;
+            ScreenShot.TransformToPixels(img_Edit.ActualWidth, img_Edit.ActualHeight, out wid, out hei);
+            var bmp = Glob.ScreenShot.CopyFromBounds(
+                (int)p.X,
+                (int)p.Y,
+                wid, hei);
+            var task = Glob.ScreenShot.ConvertBmpToSource(bmp.Result);
+            Clipboard.SetImage(task.Result);
             this.Close();
         }
         private void ToggleButton(DShapes shape)
@@ -215,7 +240,7 @@ namespace QuickShoot
             }
         }
 
-        private void CreateSaveBitmap(Canvas canvas, string filename)
+        private BitmapSource CanvasImage(Canvas canvas)
         {
             int wid = 0;int hei = 0;
             //ScreenShot.TransformToPixels(canvas.ActualWidth, canvas.ActualHeight, out wid, out hei);
@@ -234,11 +259,11 @@ namespace QuickShoot
             //JpegBitmapEncoder encoder = new JpegBitmapEncoder();
             PngBitmapEncoder encoder = new PngBitmapEncoder();
             encoder.Frames.Add(BitmapFrame.Create(renderBitmap));
-
-            using (FileStream file = File.Create(filename))
-            {
-                encoder.Save(file);
-            }
+            return encoder.Preview;
+            //using (FileStream file = File.Create(Glob.folderManager.GetCurrentPath() + "\\can-" + fileName))
+            //{
+            //    encoder.Save(file);
+            //}
         }
 
         //Window load
@@ -405,6 +430,10 @@ namespace QuickShoot
         private void lbl_Yellow_MouseDown(object sender, MouseButtonEventArgs e)
         {
             SetColor(DColors.Yellow);
+        }
+        private void lbl_Copy_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            CopyImage();
         }
     }
 }
