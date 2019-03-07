@@ -101,7 +101,7 @@ namespace QuickShoot
                     case(162): // this is when control pressed
                         ControlPressed = true;
                         break;
-                    case (67)://this is 'C' - and it needs to work only if control was pressed before
+                    default://this is 'C' - and it needs to work only if control was pressed before
                         if (ControlPressed)
                         {
                             foreach (Window win in Application.Current.Windows)
@@ -109,12 +109,18 @@ namespace QuickShoot
                                 if (win.Name == "editor_window")
                                     if (win.IsActive) //Not gonna be null if active
                                     {
-                                        Glob.editorWindow.CopyImage();
+                                        if(e.KeyboardData.VirtualCode == 67)
+                                            Glob.editorWindow.CopyImage();
+                                        else if(e.KeyboardData.VirtualCode == 83)
+                                            Glob.editorWindow.SaveAndClose();
                                     }
                                 if (win.Name == "editor_window_lite")
                                     if (win.IsActive) //Not gonna be null if active
                                     {
-                                        Glob.editorWindowLite.CopyImage();
+                                        if (e.KeyboardData.VirtualCode == 67)
+                                            Glob.editorWindowLite.CopyImage();
+                                        else if (e.KeyboardData.VirtualCode == 83)
+                                            Glob.editorWindowLite.SaveAndClose();
                                     }
                             }
                             ControlPressed = false;//release

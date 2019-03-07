@@ -57,6 +57,30 @@ namespace QuickShoot
             Orange,
             Yellow
         }
+
+        //Window load
+        private void editor_window_Loaded(object sender, RoutedEventArgs e)
+        {
+            //img_Edit.Width = canv_Img.ActualWidth - 80;
+            //img_Edit.Height = canv_Img.ActualHeight - 80;
+            Glob.BMPCropped = img_EditAsync.Result;
+            var convertTask = Glob.ScreenShot.ConvertBmpToSource(Glob.BMPCropped);
+            SetShape(DShapes.Rectangle);
+            SetColor(DColors.Green);
+            //Glob.Animate.Breath(lbl_FileName);
+            //Glob.Animate.Breath(br_Close);
+            this.FileName = DateTime.Now.ToString("yyyyMMddHHmmssff");
+            textb_FileName.Text = this.FileName;
+            textb_FileName.SelectAll();
+            Keyboard.Focus(textb_FileName);
+
+            img_Edit.Source = convertTask.Result;
+            //ImageBrush ib = new ImageBrush();
+            //ib.ImageSource = convertTask.Result;
+            //canv_Img.Background = ib;
+        }
+
+
         //Helper methods
         private void SetShape(DShapes shap)
         {
@@ -83,14 +107,24 @@ namespace QuickShoot
             int wid = 0;
             int hei = 0;
             ScreenShot.TransformToPixels(img_Edit.ActualWidth, img_Edit.ActualHeight, out wid, out hei);
-            new ScreenShot().TakeAndSave(
+            var bmp = Glob.ScreenShot.CopyFromBounds(
                 (int)p.X,
                 (int)p.Y,
-                wid, hei,
-                Glob.folderManager.GetCurrentPath() + "\\" + fileName
-                );
+                wid, hei);
+            //var task = Glob.ScreenShot.ConvertBmpToSource(bmp.Result);
+            bmp.Result.Save(Glob.folderManager.GetCurrentPath() + "\\" + fileName);
+            //Clipboard.SetImage(task.Result);
+            //new ScreenShot().TakeAndSave(
+            //    (int)p.X,
+            //    (int)p.Y,
+            //    wid, hei,
+            //    Glob.folderManager.GetCurrentPath() + "\\" + fileName
+            //    );
 
-            //CreateSaveBitmap(canv_Img, Glob.folderManager.GetCurrentPath() + "\\" + fileName);
+            //WORKING
+            //System.Drawing.Bitmap ff = CanvasImage(canv_Img);
+            //var bmp1 = Glob.ScreenShot.MergeAllBitmaps(Glob.BMPCropped, ff).Result;
+            //bmp1.Save(Glob.folderManager.GetCurrentPath() + "\\can-" + fileName);
 
             this.Close();
         }
@@ -218,10 +252,9 @@ namespace QuickShoot
                     break;
             }
         }
-
-        private void CreateSaveBitmap(Canvas canvas, string filename)
+        private System.Drawing.Bitmap CanvasImage(Canvas canvas)
         {
-            int wid = 0;int hei = 0;
+            int wid = 0; int hei = 0;
             //ScreenShot.TransformToPixels(canvas.ActualWidth, canvas.ActualHeight, out wid, out hei);
             wid = (int)canvas.ActualWidth;
             hei = (int)canvas.ActualHeight;
@@ -236,35 +269,15 @@ namespace QuickShoot
             renderBitmap.Render(canvas);
 
             //JpegBitmapEncoder encoder = new JpegBitmapEncoder();
+            MemoryStream stream = new MemoryStream();
             PngBitmapEncoder encoder = new PngBitmapEncoder();
             encoder.Frames.Add(BitmapFrame.Create(renderBitmap));
-
-            using (FileStream file = File.Create(filename))
-            {
-                encoder.Save(file);
-            }
-        }
-
-        //Window load
-        private void editor_window_Loaded(object sender, RoutedEventArgs e)
-        {
-            //img_Edit.Width = canv_Img.ActualWidth - 80;
-            //img_Edit.Height = canv_Img.ActualHeight - 80;
-
-            var convertTask = Glob.ScreenShot.ConvertBmpToSource(img_EditAsync.Result);
-            SetShape(DShapes.Rectangle);
-            SetColor(DColors.Green);
-            //Glob.Animate.Breath(lbl_FileName);
-            //Glob.Animate.Breath(br_Close);
-            this.FileName = DateTime.Now.ToString("yyyyMMddHHmmssff");
-            textb_FileName.Text = this.FileName;
-            textb_FileName.SelectAll();
-            Keyboard.Focus(textb_FileName);
-
-            img_Edit.Source = convertTask.Result;
-            //ImageBrush ib = new ImageBrush();
-            //ib.ImageSource = convertTask.Result;
-            //canv_Img.Background = ib;
+            encoder.Save(stream);
+            return new System.Drawing.Bitmap(stream);
+            //using (FileStream file = File.Create(Glob.folderManager.GetCurrentPath() + "\\can-" + fileName))
+            //{
+            //    encoder.Save(file);
+            //}
         }
 
         //Control Event Handlers
@@ -279,7 +292,7 @@ namespace QuickShoot
             effect.BlurRadius = 5;
             effect.ShadowDepth = 4;
 
-            startPoint = Mouse.GetPosition(canv_Img); 
+            startPoint = Mouse.GetPosition(canv_Img);
             if (e.ButtonState == MouseButtonState.Pressed)
             {
 
@@ -319,7 +332,7 @@ namespace QuickShoot
                         label.FontSize = 18;
                         Canvas.SetLeft(label, startPoint.X);
                         Canvas.SetTop(label, startPoint.Y);
-                        canv_Img.Children.Add(label);                       
+                        canv_Img.Children.Add(label);
                         break;
 
                 }
@@ -372,12 +385,12 @@ namespace QuickShoot
         private void canv_Img_MouseUp(object sender, MouseButtonEventArgs e)
         {
 
-            
+
         }
         private void lbl_Save_MouseDown(object sender, MouseButtonEventArgs e)
         {
             SaveAndClose();
-        }       
+        }
         private void lbl_SQ_MouseDown(object sender, MouseButtonEventArgs e)
         {
             SetShape(DShapes.Rectangle);

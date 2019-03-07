@@ -64,14 +64,15 @@ namespace QuickShoot.Helpers
         }
         public async Task<Bitmap> MergeAllBitmaps(Bitmap bmp1, Bitmap bmp2)
         {
-            Bitmap result = new Bitmap(Math.Max(bmp1.Width, bmp2.Width),
-                              Math.Max(bmp1.Height, bmp2.Height));
-            using (Graphics g = Graphics.FromImage(result))
+            Bitmap finalImage = new Bitmap(bmp1.Width, bmp1.Height, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+            using (Graphics graphics = Graphics.FromImage(finalImage))//get the underlying graphics object from the image.
             {
-                g.DrawImage(bmp2, System.Drawing.Point.Empty);
-                g.DrawImage(bmp1, System.Drawing.Point.Empty);
+
+                graphics.DrawImage(bmp1, new Rectangle(0, 0, bmp1.Width, bmp1.Height));
+                graphics.DrawImage(bmp2, new Rectangle(0, 0, bmp2.Width, bmp2.Height));
+
+                return finalImage;
             }
-            return result;
 
         }
 
@@ -119,7 +120,7 @@ namespace QuickShoot.Helpers
                     Int32Rect.Empty,
                     BitmapSizeOptions.FromEmptyOptions());
         }
-        public Bitmap BitmapFromSource(BitmapSource bitmapsource)
+        public Bitmap ConvertSourceToBmp(BitmapSource bitmapsource)
         {
             Bitmap bitmap;
             using (var outStream = new MemoryStream())

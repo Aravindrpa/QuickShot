@@ -251,10 +251,10 @@
                    ></Label>
             </Border>
         </Grid>
-        <Grid Name="grid_ImageCanvas" Margin="180,120,80,80"  Background="Transparent"
-                >
+        <Grid Name="grid_ImageCanvas" Margin="180,120,80,80"  Background="Transparent">
             <!--<Border>-->
-            <Image Name="img_Edit"                   
+            <Image Name="img_Edit"  
+                   Margin="50,0,0,0"
                    SnapsToDevicePixels="True"
                    RenderOptions.EdgeMode="Aliased"
                    RenderOptions.BitmapScalingMode="HighQuality"
@@ -269,8 +269,8 @@
             <Canvas Name="canv_Img"  Margin="0,0,0,0" MouseDown="canv_Img_MouseDown" 
                     MouseMove="canv_Img_MouseMove" MouseUp="canv_Img_MouseUp"
                     Background="Transparent" 
-                    Width="{Binding ElementName=grid_ImageCanvas, Path=ActualWidth}"
-                    Height="{Binding ElementName=grid_ImageCanvas, Path=ActualHeight}"
+            Width="{Binding ElementName=grid_ImageCanvas, Path=ActualWidth}"
+            Height="{Binding ElementName=grid_ImageCanvas, Path=ActualHeight}"
                     SnapsToDevicePixels="True"
                     ClipToBounds="True"
                     RenderOptions.EdgeMode="Aliased"
@@ -278,6 +278,7 @@
                     RenderOptions.ClearTypeHint="Enabled"
                     >
             </Canvas>
+
             <!--</Border>-->
         </Grid>
         <Grid Name="grid_Tree" Opacity="0" Background="Transparent" VerticalAlignment="Top" 
