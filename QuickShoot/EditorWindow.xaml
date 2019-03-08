@@ -20,13 +20,16 @@
         RenderOptions.ClearTypeHint="Enabled"
         VisualTextRenderingMode="ClearType"
         VisualClearTypeHint="Enabled"-->
-    <Grid Background="Gray" >
+    <Grid Name="grid_Blur" Background="Black" >
         <Image Name="img_Blur" 
                RenderOptions.EdgeMode="Aliased"
                RenderOptions.BitmapScalingMode="Linear"
-               SnapsToDevicePixels="True">
+               Margin="7,7,7,7"
+               Opacity=".8">
             <Image.Effect>
-                <BlurEffect x:Name="blurEffect"></BlurEffect>
+                <BlurEffect x:Name="blurEffect" 
+                            KernelType="Box"
+                            RenderingBias="Performance"></BlurEffect>
             </Image.Effect>
         </Image>
         <Grid VerticalAlignment="Top" Margin="0" Background="Transparent" >

@@ -44,6 +44,8 @@ namespace QuickShoot
             Glob.Config.EnableAnimations = true;
             Glob.Config.EnableBlurEffect = true;
             Glob.Config.EnableLiteMode = false;
+            Glob.Config.BlurRadious = 7;
+            Glob.Config.EditorBackgroundOpacity = .8;
 
 
             this.Left = System.Windows.SystemParameters.PrimaryScreenWidth - 150;
@@ -95,6 +97,11 @@ namespace QuickShoot
                                 if (win.IsActive) //Not gonna be null if active
                                 {
                                     Glob.editorWindowLite.SaveAndClose();
+                                }
+                            if (win.Name == "capture_window")
+                                if (win.IsActive) //Not gonna be null if active
+                                {
+                                    Glob.captureWindow.TakeWholeScreen();
                                 }
                         }
                         break;

@@ -43,11 +43,13 @@ namespace QuickShoot
 
             if (Glob.Config.EnableBlurEffect)
             {
-                img_Blur.Opacity = 1;
-                blurEffect.Radius = 7;
+                grid_Blur.Background = Brushes.Black;
+                img_Blur.Opacity = Glob.Config.EditorBackgroundOpacity;
+                blurEffect.Radius = Glob.Config.BlurRadious;
             }
             else
             {
+                grid_Blur.Background = Brushes.Gray;
                 img_Blur.Opacity = 0;
                 blurEffect.Radius = 0;
             }

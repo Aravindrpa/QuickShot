@@ -107,6 +107,27 @@ namespace QuickShoot
                 rect.Height = hei;
             }
         }
+        public void TakeWholeScreen()
+        {
+            int l = 0;
+            int t = 0;
+            int wid = screenWidthdpi;
+            int hei = screenHeightdpi;
+            this.Hide();
+
+            if (Glob.Config.EnableLiteMode)
+            {
+                Glob.editorWindowLite = new EditorWindowLite(l, t, wid, hei);
+                Glob.editorWindowLite.Show();
+            }
+            else
+            {
+                Glob.editorWindow = new EditorWindow(l, t, wid, hei);
+                Glob.editorWindow.Show();
+            }
+
+            this.Close();
+        }
         private void canvas_Draw_MouseUp(object sender, MouseButtonEventArgs e)
         {
             int l = 0;
