@@ -14,6 +14,7 @@
         Background="Transparent"
         Name="editor_window" 
         Loaded="editor_window_Loaded"
+        UseLayoutRounding="True"
         >
     <!--RenderOptions.BitmapScalingMode="HighQuality"
         RenderOptions.ClearTypeHint="Enabled"
@@ -22,7 +23,8 @@
     <Grid Background="Gray" >
         <Image Name="img_Blur" 
                RenderOptions.EdgeMode="Aliased"
-               RenderOptions.BitmapScalingMode="LowQuality">
+               RenderOptions.BitmapScalingMode="Linear"
+               SnapsToDevicePixels="True">
             <Image.Effect>
                 <BlurEffect x:Name="blurEffect"></BlurEffect>
             </Image.Effect>
@@ -257,8 +259,9 @@
                    Margin="50,0,0,0"
                    SnapsToDevicePixels="True"
                    RenderOptions.EdgeMode="Aliased"
-                   RenderOptions.BitmapScalingMode="HighQuality"
-                   RenderOptions.ClearTypeHint="Enabled">
+                   RenderOptions.BitmapScalingMode="Fant"
+                   RenderOptions.ClearTypeHint="Enabled"
+                   UseLayoutRounding="True">
                 <Image.Effect>
                     <DropShadowEffect BlurRadius="30" Direction="270" 
                                       ShadowDepth="11" Opacity=".7">
