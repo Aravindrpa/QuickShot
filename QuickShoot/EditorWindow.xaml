@@ -104,7 +104,8 @@
                     BorderBrush="Transparent"
                     Margin="0,50,350,0"
                     >
-                <TextBox Name="textb_FileName" Padding="3,2,3,2" Background="Transparent" Foreground="White" FontSize="22" FontWeight="Bold" Margin="-10,-3,0,-3">
+                <TextBox Name="textb_FileName" Padding="3,2,3,2" Background="Transparent" Foreground="White" 
+                         FontSize="22" FontWeight="Bold" Margin="-10,-3,0,-3">
                 </TextBox>
             </Border>
             <Border Background="Transparent" 

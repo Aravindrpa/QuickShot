@@ -25,7 +25,7 @@ namespace QuickShoot
         public Point startPoint { get; set; }
         public Rectangle rect { get; set; }
         public Line line { get; set; }
-        public TextBox label { get; set; }
+        public TextBox text { get; set; }
         public Border br { get; set; }
         public DShapes shape { get; set; }
         public DColors color { get; set; }
@@ -303,6 +303,14 @@ namespace QuickShoot
         }
         private void canv_Img_MouseDown(object sender, MouseButtonEventArgs e)
         {
+            //foreach (var child in canv_Img.Children)
+            //{
+            //    if (child.GetType() == typeof(TextBox))
+            //    {
+            //        var tb = (TextBox)child;
+            //        tb.BorderThickness = new Thickness(0, 0, 0, 0);
+            //    }
+            //}
             var effect = new DropShadowEffect();
             effect.Direction = 320;
             effect.BlurRadius = 5;
@@ -337,23 +345,42 @@ namespace QuickShoot
                         canv_Img.Children.Add(line);
                         break;
                     case (DShapes.Text):
-                        label = new TextBox();
-                        label.Foreground = Glob.Config.SelectedBrush;
-                        label.Background = Brushes.Transparent;
+                        text = new TextBox();
+                        text.Foreground = Glob.Config.SelectedBrush;
+                        text.Background = Brushes.Transparent;
+                        text.BorderBrush = Glob.Config.SelectedBrush;
+                        text.BorderThickness = new Thickness(2,0,0,2);
                         effect.ShadowDepth = 1;
                         effect.BlurRadius = 3;
-                        label.Effect = effect;
+                        text.Effect = effect;
                         //label.Padding = new Thickness(5,5,5,5);
-                        label.BorderThickness = new Thickness(0);
-                        label.FontSize = 18;
-                        Canvas.SetLeft(label, startPoint.X);
-                        Canvas.SetTop(label, startPoint.Y);
-                        canv_Img.Children.Add(label);
+                        //label.BorderThickness = new Thickness(0);
+                        text.FontSize = 18;
+                        Canvas.SetLeft(text, startPoint.X);
+                        Canvas.SetTop(text, startPoint.Y);
+                        canv_Img.Children.Add(text);
+                        //text.SelectAll();
+                        Keyboard.Focus(text);
+                        //text.LostFocus += Text_LostFocus;
+                        text.TextChanged += Text_TextChanged;
                         break;
 
                 }
             }
         }
+
+        private void Text_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            TextBox tb = sender as TextBox;
+            tb.BorderThickness = new Thickness(0, 0, 0, 0);
+        }
+
+        //private void Text_LostFocus(object sender, RoutedEventArgs e)
+        //{
+        //    TextBox tb = sender as TextBox;
+        //    tb.BorderThickness = new Thickness(0, 0, 0, 0);
+        //}
+
         private void canv_Img_MouseMove(object sender, MouseEventArgs e)
         {
             try
