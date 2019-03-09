@@ -32,7 +32,7 @@
                             RenderingBias="Performance"></BlurEffect>
             </Image.Effect>
         </Image>
-        <Grid VerticalAlignment="Top" Margin="0" Background="Transparent" >
+        <Grid VerticalAlignment="Top" Margin="0" Height="110" Background="Transparent" >
             <Border Name="br_Close"  Background="Black" Margin="0,4,4,0" 
                     HorizontalAlignment="Right"
                     VerticalAlignment="Top"
@@ -55,7 +55,7 @@
                     Height="50" Width="93" Opacity=".65"
                     BorderThickness="6" CornerRadius="15"
                     BorderBrush="Green"
-                    Margin="0,50,250,0"
+                    Margin="0,30,280,0"
                     >
                 <Label Name="lbl_Save" MouseDown="lbl_Save_MouseDown" Content="Save" FontSize="22" 
                    Background="Green" 
@@ -71,7 +71,7 @@
                     Height="50" Width="93" Opacity=".65"
                     BorderThickness="6" CornerRadius="15"
                     BorderBrush="Green"
-                    Margin="0,50,150,0"
+                    Margin="0,30,180,0"
                     >
                 <Label Name="lbl_Copy" MouseDown="lbl_Copy_MouseDown" Content="Copy" FontSize="22" 
                    Background="Green" 
@@ -87,7 +87,7 @@
                     Height="50" Width="576" Opacity=".65"
                     BorderThickness="6" CornerRadius="15"
                     BorderBrush="Green"
-                    Margin="0,50,348,0"
+                    Margin="0,30,380,0"
                     >
                 <Label Name="lbl_bac" Content="" FontSize="22" 
                    Background="Green" 
@@ -102,7 +102,7 @@
                     Opacity=".65"
                     BorderThickness="10" CornerRadius="15"
                     BorderBrush="Transparent"
-                    Margin="0,50,350,0"
+                    Margin="0,30,390,0"
                     >
                 <TextBox Name="textb_FileName" Padding="3,2,3,2" Background="Transparent" Foreground="White" 
                          FontSize="22" FontWeight="Bold" Margin="-10,-3,0,-3">
@@ -114,7 +114,7 @@
                 Height="60" Width="174" Opacity=".65"
                 BorderThickness="6" CornerRadius="15"
                 BorderBrush="Transparent"
-                Margin="0,40,750,0"
+                Margin="0,20,780,0"
                     >
                 <Label x:Name="lbl_FileName" Content="File Name : |" FontWeight="Bold" FontSize="25" 
                     Background="Transparent" 
@@ -129,7 +129,7 @@
                     Height="50" Width="50" Opacity=".65"
                     BorderThickness="6" CornerRadius="15"
                     BorderBrush="Black"
-                    Margin="0,200,7,-270"
+                    Margin="0,160,15,-270"
                     Name="br_SQ"
                     >
                 <Label Name="lbl_SQ" Content="[ ]"
@@ -148,7 +148,7 @@
                     Height="50" Width="50" Opacity=".65"
                     BorderThickness="6" CornerRadius="15"
                     BorderBrush="Black"
-                    Margin="0,260,7,-270"
+                    Margin="0,220,15,-270"
                     Name="br_LN"
                     >
                 <Label Name="lbl_LN" Content="/"
@@ -167,7 +167,7 @@
                     Height="50" Width="50" Opacity=".65"
                     BorderThickness="6" CornerRadius="15"
                     BorderBrush="Black"
-                    Margin="0,320,7,-270"
+                    Margin="0,280,15,-270"
                     Name="br_T"
                     >
                 <Label Name="lbl_T" Content="T" 
@@ -183,10 +183,29 @@
             <Border Background="Black" 
                     HorizontalAlignment="Right" 
                     VerticalAlignment="Top"
+                    Height="50" Width="50" Opacity=".65"
+                    BorderThickness="6" CornerRadius="15"
+                    BorderBrush="Black"
+                    Margin="0,340,15,-280"
+                    Name="br_C"
+                    >
+                <Label Name="lbl_C" Content="( )" 
+                       MouseDown="lbl_C_MouseDown"
+                       FontSize="18" 
+                   Background="Black" 
+                   Foreground="White" 
+                   HorizontalContentAlignment="Center" 
+                   VerticalContentAlignment="Stretch"
+                   FontWeight="Bold"
+                   ></Label>
+            </Border>
+            <Border Background="Black" 
+                    HorizontalAlignment="Right" 
+                    VerticalAlignment="Top"
                     Height="40" Width="40" Opacity=".65"
                     BorderThickness="6" CornerRadius="15"
                     BorderBrush="Transparent"
-                    Margin="0,400,15,-375"
+                    Margin="0,430,20,-360"
                     Name="br_Red"
                     >
                 <Label Name="lbl_Red"
@@ -205,7 +224,7 @@
                     Height="40" Width="40" Opacity=".65"
                     BorderThickness="6" CornerRadius="15"
                     BorderBrush="Transparent"
-                    Margin="0,440,15,-380"
+                    Margin="0,472,20,-402"
                     Name="br_Green"
                     >
                 <Label Name="lbl_Green"
@@ -215,7 +234,7 @@
                    Foreground="White" 
                    HorizontalContentAlignment="Center" 
                    VerticalContentAlignment="Stretch"
-                   FontWeight="Bold"
+                   FontWeight="Bold" Margin="0,-1,0,1"
                    ></Label>
             </Border>
             <Border Background="Black" 
@@ -224,7 +243,7 @@
                     Height="40" Width="40" Opacity=".65"
                     BorderThickness="6" CornerRadius="15"
                     BorderBrush="Transparent"
-                    Margin="0,480,15,-420"
+                    Margin="0,512,20,-442"
                     Name="br_Oran"
                     >
                 <Label Name="lbl_Oran"
@@ -243,7 +262,7 @@
                     Height="40" Width="40" Opacity=".65"
                     BorderThickness="6" CornerRadius="15"
                     BorderBrush="Transparent"
-                    Margin="0,520,15,-460"
+                    Margin="0,552,20,-482"
                     Name="br_Yellow"
                     >
                 <Label Name="lbl_Yellow"
@@ -257,10 +276,11 @@
                    ></Label>
             </Border>
         </Grid>
-        <Grid Name="grid_ImageCanvas" Margin="180,120,80,80"  Background="Transparent">
+        <Grid Name="grid_ImageCanvas" MouseDown="grid_ImageCanvas_MouseDown" MouseMove="grid_ImageCanvas_MouseMove" 
+              Margin="110,110,80,80"  Background="Transparent">
             <!--<Border>-->
             <Image Name="img_Edit"  
-                   Margin="50,0,0,0"
+                   Margin="0,0,0,0"
                    SnapsToDevicePixels="True"
                    RenderOptions.EdgeMode="Aliased"
                    RenderOptions.BitmapScalingMode="Fant"
@@ -273,22 +293,22 @@
                 </Image.Effect>
             </Image>
             <!--Margin="50,50,50,50"-->
-            <Canvas Name="canv_Img"  Margin="0,0,0,0" MouseDown="canv_Img_MouseDown" 
+            <Canvas Name="canv_Img" MouseDown="canv_Img_MouseDown" 
                     MouseMove="canv_Img_MouseMove" MouseUp="canv_Img_MouseUp"
                     Background="Transparent" 
-            Width="{Binding ElementName=grid_ImageCanvas, Path=ActualWidth}"
-            Height="{Binding ElementName=grid_ImageCanvas, Path=ActualHeight}"
                     SnapsToDevicePixels="True"
                     ClipToBounds="True"
                     RenderOptions.EdgeMode="Aliased"
                     RenderOptions.BitmapScalingMode="HighQuality"
                     RenderOptions.ClearTypeHint="Enabled"
+                    Width="{Binding ElementName=grid_ImageCanvas, Path=ActualWidth}"
+                    Height="{Binding ElementName=grid_ImageCanvas, Path=ActualHeight}"                  
                     >
             </Canvas>
-
+            
             <!--</Border>-->
         </Grid>
-        <Grid Name="grid_Tree" Opacity="0" Background="Transparent" VerticalAlignment="Top" 
+        <!--<Grid Name="grid_Tree" Opacity="0" Background="Transparent" VerticalAlignment="Top" 
               HorizontalAlignment="Left"
               Margin="0,100,0,0">
             <Border Name="br_Tree"  Background="Black" Margin="4,0,0,0" 
@@ -302,6 +322,6 @@
                       Background="Transparent">
                 </TreeView>
             </Border>
-        </Grid>
+        </Grid>-->
     </Grid>
 </Window>

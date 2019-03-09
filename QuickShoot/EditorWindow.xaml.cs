@@ -60,7 +60,8 @@ namespace QuickShoot
         {
             Rectangle,
             Line,
-            Text
+            Text,
+            Circle
         }
         public enum DColors
         {
@@ -164,14 +165,17 @@ namespace QuickShoot
                 case (DShapes.Rectangle):
                     br_T.BorderBrush = Brushes.Black;
                     br_LN.BorderBrush = Brushes.Black;
+                    br_C.BorderBrush = Brushes.Black;
                     br_SQ.BorderBrush = Brushes.Green;
                     lbl_T.Background = Brushes.Black;
+                    lbl_C.Background = Brushes.Black;
                     lbl_LN.Background = Brushes.Black;
                     lbl_SQ.Background = Brushes.Green;
                     if (Glob.Config.EnableAnimations)
                     {
                         Glob.Animate.Breath(br_T);
                         Glob.Animate.Breath(br_LN);
+                        Glob.Animate.Breath(br_C);
                         Glob.Animate.StopBreath(br_SQ);
                     }
                     break;
@@ -179,13 +183,16 @@ namespace QuickShoot
                     br_T.BorderBrush = Brushes.Black;
                     br_LN.BorderBrush = Brushes.Green;
                     br_SQ.BorderBrush = Brushes.Black;
+                    br_C.BorderBrush = Brushes.Black;
                     lbl_T.Background = Brushes.Black;
+                    lbl_C.Background = Brushes.Black;
                     lbl_LN.Background = Brushes.Green;
                     lbl_SQ.Background = Brushes.Black;
                     if (Glob.Config.EnableAnimations)
                     {
                         Glob.Animate.Breath(br_T);
                         Glob.Animate.Breath(br_SQ);
+                        Glob.Animate.Breath(br_C);
                         Glob.Animate.StopBreath(br_LN);
                     }
                     break;
@@ -193,14 +200,34 @@ namespace QuickShoot
                     br_T.BorderBrush = Brushes.Green;
                     br_LN.BorderBrush = Brushes.Black;
                     br_SQ.BorderBrush = Brushes.Black;
+                    br_C.BorderBrush = Brushes.Black;
                     lbl_T.Background = Brushes.Green;
+                    lbl_C.Background = Brushes.Black;
                     lbl_LN.Background = Brushes.Black;
                     lbl_SQ.Background = Brushes.Black;
                     if (Glob.Config.EnableAnimations)
                     {
                         Glob.Animate.Breath(br_SQ);
                         Glob.Animate.Breath(br_LN);
+                        Glob.Animate.Breath(br_C);
                         Glob.Animate.StopBreath(br_T);
+                    }
+                    break;
+                case (DShapes.Circle):
+                    br_T.BorderBrush = Brushes.Black;
+                    br_LN.BorderBrush = Brushes.Black;
+                    br_SQ.BorderBrush = Brushes.Black;
+                    br_C.BorderBrush = Brushes.Green;
+                    lbl_T.Background = Brushes.Black;
+                    lbl_LN.Background = Brushes.Black;
+                    lbl_SQ.Background = Brushes.Black;
+                    lbl_C.Background = Brushes.Green;
+                    if (Glob.Config.EnableAnimations)
+                    {
+                        Glob.Animate.Breath(br_SQ);
+                        Glob.Animate.Breath(br_LN);
+                        Glob.Animate.Breath(br_T);
+                        Glob.Animate.StopBreath(br_C);
                     }
                     break;
             }
@@ -311,6 +338,8 @@ namespace QuickShoot
             //        tb.BorderThickness = new Thickness(0, 0, 0, 0);
             //    }
             //}
+            //ABove not
+
             var effect = new DropShadowEffect();
             effect.Direction = 320;
             effect.BlurRadius = 5;
@@ -349,7 +378,7 @@ namespace QuickShoot
                         text.Foreground = Glob.Config.SelectedBrush;
                         text.Background = Brushes.Transparent;
                         text.BorderBrush = Glob.Config.SelectedBrush;
-                        text.BorderThickness = new Thickness(2,0,0,2);
+                        text.BorderThickness = new Thickness(2, 0, 0, 2);
                         effect.ShadowDepth = 1;
                         effect.BlurRadius = 3;
                         text.Effect = effect;
@@ -361,26 +390,23 @@ namespace QuickShoot
                         canv_Img.Children.Add(text);
                         //text.SelectAll();
                         Keyboard.Focus(text);
-                        //text.LostFocus += Text_LostFocus;
+                        text.LostFocus += Text_LostFocus;
                         text.TextChanged += Text_TextChanged;
                         break;
 
                 }
             }
         }
-
         private void Text_TextChanged(object sender, TextChangedEventArgs e)
         {
             TextBox tb = sender as TextBox;
             tb.BorderThickness = new Thickness(0, 0, 0, 0);
         }
-
-        //private void Text_LostFocus(object sender, RoutedEventArgs e)
-        //{
-        //    TextBox tb = sender as TextBox;
-        //    tb.BorderThickness = new Thickness(0, 0, 0, 0);
-        //}
-
+        private void Text_LostFocus(object sender, RoutedEventArgs e)
+        {
+            TextBox tb = sender as TextBox;
+            tb.BorderThickness = new Thickness(0, 0, 0, 0);
+        }
         private void canv_Img_MouseMove(object sender, MouseEventArgs e)
         {
             try
@@ -446,6 +472,10 @@ namespace QuickShoot
         {
             SetShape(DShapes.Text);
         }
+        private void lbl_C_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            SetShape(DShapes.Circle);
+        }
         private void lbl_Red_MouseDown(object sender, MouseButtonEventArgs e)
         {
             SetColor(DColors.Red);
@@ -465,6 +495,14 @@ namespace QuickShoot
         private void lbl_Copy_MouseDown(object sender, MouseButtonEventArgs e)
         {
             CopyImage();
+        }
+        private void grid_ImageCanvas_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            
+        }
+        private void grid_ImageCanvas_MouseMove(object sender, MouseEventArgs e)
+        {
+           
         }
     }
 }
