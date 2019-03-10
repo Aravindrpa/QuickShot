@@ -298,9 +298,6 @@
                     Background="Transparent" 
                     SnapsToDevicePixels="True"
                     ClipToBounds="True"
-                    RenderOptions.EdgeMode="Aliased"
-                    RenderOptions.BitmapScalingMode="HighQuality"
-                    RenderOptions.ClearTypeHint="Enabled"
                     Width="{Binding ElementName=grid_ImageCanvas, Path=ActualWidth}"
                     Height="{Binding ElementName=grid_ImageCanvas, Path=ActualHeight}"                  
                     >

@@ -25,6 +25,7 @@ namespace QuickShoot
         public Point startPoint { get; set; }
         public Rectangle rect { get; set; }
         public Line line { get; set; }
+        public Ellipse circle { get; set; }
         public TextBox text { get; set; }
         public Border br { get; set; }
         public DShapes shape { get; set; }
@@ -342,8 +343,8 @@ namespace QuickShoot
 
             var effect = new DropShadowEffect();
             effect.Direction = 320;
-            effect.BlurRadius = 5;
-            effect.ShadowDepth = 4;
+            effect.BlurRadius = 5.5;
+            effect.ShadowDepth = 4.5;
 
             startPoint = Mouse.GetPosition(canv_Img);
             if (e.ButtonState == MouseButtonState.Pressed)
@@ -357,7 +358,7 @@ namespace QuickShoot
                         Canvas.SetTop(br, startPoint.Y);
                         rect = new Rectangle();
                         rect.Stroke = Glob.Config.SelectedBrush;
-                        rect.StrokeThickness = 2.2;
+                        rect.StrokeThickness = 2.2;                       
                         br.BorderThickness = new Thickness(2);
                         br.BorderBrush = Brushes.Transparent;
                         br.Effect = effect;
@@ -367,7 +368,7 @@ namespace QuickShoot
                     case (DShapes.Line):
                         line = new Line();
                         line.Stroke = Glob.Config.SelectedBrush;
-                        line.StrokeThickness = 2;
+                        line.StrokeThickness = 2.2;
                         line.X1 = startPoint.X;
                         line.Y1 = startPoint.Y;
                         line.Effect = effect;
@@ -392,6 +393,15 @@ namespace QuickShoot
                         Keyboard.Focus(text);
                         text.LostFocus += Text_LostFocus;
                         text.TextChanged += Text_TextChanged;
+                        break;
+                    case (DShapes.Circle):
+                        circle = new Ellipse();
+                        circle.Stroke = Glob.Config.SelectedBrush;
+                        circle.StrokeThickness = 2.2;
+                        circle.Effect = effect;
+                        Canvas.SetLeft(circle, startPoint.X);
+                        Canvas.SetTop(circle, startPoint.Y);
+                        canv_Img.Children.Add(circle);
                         break;
 
                 }
@@ -443,6 +453,26 @@ namespace QuickShoot
                         case (DShapes.Line):
                             line.X2 = pointNow.X;
                             line.Y2 = pointNow.Y;
+                            break;
+                        case (DShapes.Circle):
+                            if (pointNow.X < startPoint.X)
+                            {
+                                wid = startPoint.X - pointNow.X;
+                                Canvas.SetLeft(circle, pointNow.X);
+                            }
+                            else
+                                wid = pointNow.X - startPoint.X;
+
+                            if (pointNow.Y < startPoint.Y)
+                            {
+                                hei = startPoint.Y - pointNow.Y;
+                                Canvas.SetTop(circle, pointNow.Y);
+                            }
+                            else
+                                hei = pointNow.Y - startPoint.Y;
+
+                            circle.Width = wid;
+                            circle.Height = hei;
                             break;
                     }
                 }
