@@ -34,6 +34,11 @@ namespace QuickShoot
 
         //private Task<BitmapSource> img_BlurAsync { get; set; }
         private Task<System.Drawing.Bitmap> img_EditAsync { get; set; }
+        //private Task<System.Drawing.Bitmap> imgTask { get; set; }
+        //private Task<BitmapSource> copyTask { get; set; }
+
+
+
 
         public EditorWindow(int left, int top, int width, int height)
         {
@@ -79,6 +84,7 @@ namespace QuickShoot
             //img_Edit.Height = canv_Img.ActualHeight - 80;
             Glob.BMPCropped = img_EditAsync.Result;
             var convertTask = Glob.ScreenShot.ConvertBmpToSource(Glob.BMPCropped);
+            //Glob.BMPCropped.Save("D:\\test.png", System.Drawing.Imaging.ImageFormat.Png);
             SetShape(DShapes.Rectangle);
             SetColor(DColors.Green);
             //Glob.Animate.Breath(lbl_FileName);
@@ -93,10 +99,20 @@ namespace QuickShoot
                 img_Blur.Source = Glob.Background; //Glob.Background;
 
             img_Edit.Source = convertTask.Result;
+            //var p = img_Edit.PointToScreen(new Point());
+            //MessageBox.Show(p.X + "-" + p.Y);
             //ImageBrush ib = new ImageBrush();
             //ib.ImageSource = convertTask.Result;
             //canv_Img.Background = ib;
         }
+        //private void editor_window_Closed(object sender, EventArgs e)
+        //{
+        //    if (isCopy)
+        //        Clipboard.SetImage(copyTask.Result);           
+        //    else if(isSave)
+        //        imgTask.Result.Save(Glob.folderManager.GetCurrentPath() + "\\" + this.FileName, System.Drawing.Imaging.ImageFormat.Png);
+
+        //}
 
         //Helper methods
         private void SetShape(DShapes shap)
@@ -109,6 +125,7 @@ namespace QuickShoot
             this.color = col;
             ToggleButton2(this.color);
         }
+
         public void SaveAndClose()
         {
             Glob.folderManager.DTimer.Start();
@@ -120,44 +137,75 @@ namespace QuickShoot
                 else
                     fileName = textb_FileName.Text + ".png";
 
-            var p = img_Edit.PointToScreen(new Point());
-            int wid = 0;
-            int hei = 0;
-            ScreenShot.TransformToPixels(img_Edit.ActualWidth, img_Edit.ActualHeight, out wid, out hei);
-            var bmp = Glob.ScreenShot.CopyFromBounds(
-                (int)p.X,
-                (int)p.Y,
-                wid, hei);
-            //var task = Glob.ScreenShot.ConvertBmpToSource(bmp.Result);
-            bmp.Result.Save(Glob.folderManager.GetCurrentPath() + "\\" + fileName);
-            //Clipboard.SetImage(task.Result);
-            //new ScreenShot().TakeAndSave(
+            //this.FileName = fileName;
+
+            System.Drawing.Bitmap canvasShapeImage = CanvasImage(canv_Img);
+            var imgTask = Glob.ScreenShot.MergeAllBitmaps(Glob.BMPCropped, canvasShapeImage);
+            //isSave = true;
+            this.Close();
+            imgTask.Result.Save(Glob.folderManager.GetCurrentPath() + "\\" + fileName, System.Drawing.Imaging.ImageFormat.Png);
+
+            //var p = img_Edit.PointToScreen(new Point());
+            //int wid = 0;
+            //int hei = 0;
+            //ScreenShot.TransformToPixels(img_Edit.ActualWidth, img_Edit.ActualHeight, out wid, out hei);
+            //var bmp = Glob.ScreenShot.CopyFromBounds(
             //    (int)p.X,
             //    (int)p.Y,
-            //    wid, hei,
-            //    Glob.folderManager.GetCurrentPath() + "\\" + fileName
-            //    );
+            //    wid, hei);
+            //var task = Glob.ScreenShot.ConvertBmpToSource(bmp.Result);
+            //bmp.Result.Save(Glob.folderManager.GetCurrentPath() + "\\" + fileName, System.Drawing.Imaging.ImageFormat.Png);
+            //Clipboard.SetImage(task.Result);
 
-            //WORKING
-            //System.Drawing.Bitmap ff = CanvasImage(canv_Img);
-            //var bmp1 = Glob.ScreenShot.MergeAllBitmaps(Glob.BMPCropped, ff).Result;
-            //bmp1.Save(Glob.folderManager.GetCurrentPath() + "\\can-" + fileName);
 
-            this.Close();
+
+            ////WORKING
+            ////var g = img_Edit.PointToScreen(new Point());
+            ////int gwid = 0;
+            ////int ghei = 0;
+            ////ScreenShot.TransformToPixels(img_Edit.ActualWidth, img_Edit.ActualHeight, out gwid, out ghei);
+
+
+            //canvasShapeImage.Save(Glob.folderManager.GetCurrentPath() + "\\shp1-" + fileName, System.Drawing.Imaging.ImageFormat.Png);
+
+            ////this is the rendered image from canvas
+            ////But canvas size is different from image captured from bounds of image control above
+            ////so this needs to be corrected somehow to merge with actual screen capture
+
+            ////int px = 0;int py = 0;
+            ////ScreenShot.TransformToPixels(p.X, p.Y, out px, out py);
+            //var correction = (3.59 / 100) * Glob.WidthWithDPI;//Glob.BMPCropped.Width; //3.59 -- was trial and error -- actually 69 width was working for FHD resolution - converted to %
+            //var correction1 = (3.59 / 100) * Glob.HeightWithDPI;
+            //var rounded = (int)(Math.Round(correction, 0, MidpointRounding.AwayFromZero));
+            //var rounded1 = (int)(Math.Round(correction1, 0, MidpointRounding.AwayFromZero));
+            //var croppedShpeImage = Glob.ScreenShot.Crop(canvasShapeImage
+            //    , 0, 0,
+            //   (int)img_Edit.ActualWidth, (int)img_Edit.ActualHeight);
+            //var b = croppedShpeImage.Result;
+            //b.Save(Glob.folderManager.GetCurrentPath() + "\\shp-" + fileName, System.Drawing.Imaging.ImageFormat.Png);
+
+
         }
+
         public void CopyImage()
         {
-            var p = img_Edit.PointToScreen(new Point());
-            int wid = 0;
-            int hei = 0;
-            ScreenShot.TransformToPixels(img_Edit.ActualWidth, img_Edit.ActualHeight, out wid, out hei);
-            var bmp = Glob.ScreenShot.CopyFromBounds(
-                (int)p.X,
-                (int)p.Y,
-                wid, hei);
-            var task = Glob.ScreenShot.ConvertBmpToSource(bmp.Result);
-            Clipboard.SetImage(task.Result);
+            //var p = img_Edit.PointToScreen(new Point());
+            //int wid = 0;
+            //int hei = 0;
+            //ScreenShot.TransformToPixels(img_Edit.ActualWidth, img_Edit.ActualHeight, out wid, out hei);
+            //var bmp = Glob.ScreenShot.CopyFromBounds(
+            //    (int)p.X,
+            //    (int)p.Y,
+            //    wid, hei);
+            //var task = Glob.ScreenShot.ConvertBmpToSource(bmp.Result);
+
+            //async result is not helping here, no async calls -- maybe a serial call would be faster??
+            System.Drawing.Bitmap canvasShapeImage = CanvasImage(canv_Img);
+            var firstTask = Glob.ScreenShot.MergeAllBitmaps(Glob.BMPCropped, canvasShapeImage);
+            var copyTask = Glob.ScreenShot.ConvertBmpToSource(firstTask.Result);
+            //isCopy = true;
             this.Close();
+            Clipboard.SetImage(copyTask.Result);//after calling close - bit faster putting here
         }
         private void ToggleButton(DShapes shape)
         {
@@ -481,11 +529,6 @@ namespace QuickShoot
             catch
             { }
         }
-        private void canv_Img_MouseUp(object sender, MouseButtonEventArgs e)
-        {
-
-
-        }
         private void lbl_Save_MouseDown(object sender, MouseButtonEventArgs e)
         {
             SaveAndClose();
@@ -526,13 +569,6 @@ namespace QuickShoot
         {
             CopyImage();
         }
-        private void grid_ImageCanvas_MouseDown(object sender, MouseButtonEventArgs e)
-        {
-            
-        }
-        private void grid_ImageCanvas_MouseMove(object sender, MouseEventArgs e)
-        {
-           
-        }
+
     }
 }

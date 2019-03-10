@@ -276,8 +276,9 @@
                    ></Label>
             </Border>
         </Grid>
-        <Grid Name="grid_ImageCanvas" MouseDown="grid_ImageCanvas_MouseDown" MouseMove="grid_ImageCanvas_MouseMove" 
-              Margin="110,110,80,80"  Background="Transparent">
+        <Grid Name="grid_ImageCanvas" 
+              Margin="110,110,80,80"  
+              Background="Transparent">
             <!--<Border>-->
             <Image Name="img_Edit"  
                    Margin="0,0,0,0"
@@ -293,13 +294,14 @@
                 </Image.Effect>
             </Image>
             <!--Margin="50,50,50,50"-->
-            <Canvas Name="canv_Img" MouseDown="canv_Img_MouseDown" 
-                    MouseMove="canv_Img_MouseMove" MouseUp="canv_Img_MouseUp"
+            <Canvas Name="canv_Img" 
+                    MouseDown="canv_Img_MouseDown" 
+                    MouseMove="canv_Img_MouseMove" 
                     Background="Transparent" 
                     SnapsToDevicePixels="True"
                     ClipToBounds="True"
-                    Width="{Binding ElementName=grid_ImageCanvas, Path=ActualWidth}"
-                    Height="{Binding ElementName=grid_ImageCanvas, Path=ActualHeight}"                  
+                    Width="{Binding ElementName=img_Edit, Path=ActualWidth}"
+                    Height="{Binding ElementName=img_Edit, Path=ActualHeight}"                  
                     >
             </Canvas>
             

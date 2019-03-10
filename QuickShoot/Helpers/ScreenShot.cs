@@ -64,16 +64,94 @@ namespace QuickShoot.Helpers
         }
         public async Task<Bitmap> MergeAllBitmaps(Bitmap bmp1, Bitmap bmp2)
         {
-            Bitmap finalImage = new Bitmap(bmp1.Width, bmp1.Height, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+
+            Bitmap finalImage = null;
+
+            if (bmp1.Width > bmp1.Height)
+            {
+                bmp1 = Resize_Picture(bmp1, Glob.WidthWithDPI, 0);
+                bmp2 = Resize_Picture(bmp2, Glob.WidthWithDPI, 0);
+            }
+            else if (bmp1.Width < bmp1.Height)
+            {
+                bmp1 = Resize_Picture(bmp1, 0, Glob.HeightWithDPI);
+                bmp2 = Resize_Picture(bmp2, 0, Glob.HeightWithDPI);
+            }
+            else if (bmp1.Width == bmp1.Height)
+            {
+                bmp1 = Resize_Picture(bmp1, Glob.WidthWithDPI, Glob.HeightWithDPI);
+                bmp2 = Resize_Picture(bmp2, Glob.WidthWithDPI, Glob.HeightWithDPI);
+            }
+
+            finalImage = new Bitmap(bmp1.Width,bmp1.Height, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+
+            //bmp2.Save(Glob.folderManager.GetCurrentPath() + "\\shp-" + filename);
+            //new Bitmap(Glob.WidthWithDPI, Glob.HeightWithDPI, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
             using (Graphics graphics = Graphics.FromImage(finalImage))//get the underlying graphics object from the image.
             {
+                //graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
+                //graphics.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
+                //graphics.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.HighQuality;
+                //graphics.CompositingQuality = System.Drawing.Drawing2D.CompositingQuality.HighQuality;
 
                 graphics.DrawImage(bmp1, new Rectangle(0, 0, bmp1.Width, bmp1.Height));
-                graphics.DrawImage(bmp2, new Rectangle(0, 0, bmp2.Width, bmp2.Height));
+                graphics.DrawImage(bmp2, new Rectangle(0, 0, bmp1.Width, bmp1.Height)); //convert/strech to bmp1 size 
 
                 return finalImage;
             }
 
+        }
+
+        public static Bitmap Resize_Picture(Bitmap bmp, int FinalWidth, int FinalHeight)
+        {
+            System.Drawing.Bitmap NewBMP;
+            System.Drawing.Graphics graphicTemp;
+
+
+            int iWidth;
+            int iHeight;
+            if ((FinalHeight == 0) && (FinalWidth != 0))
+            {
+                iWidth = FinalWidth;
+                iHeight = (bmp.Size.Height * iWidth / bmp.Size.Width);
+            }
+            else if ((FinalHeight != 0) && (FinalWidth == 0))
+            {
+                iHeight = FinalHeight;
+                iWidth = (bmp.Size.Width * iHeight / bmp.Size.Height);
+            }
+            else
+            {
+                iWidth = FinalWidth;
+                iHeight = FinalHeight;
+            }
+
+            NewBMP = new System.Drawing.Bitmap(iWidth, iHeight);
+            using (graphicTemp = System.Drawing.Graphics.FromImage(NewBMP))
+            { 
+                //graphicTemp.CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceOver;
+                //graphicTemp.CompositingQuality = System.Drawing.Drawing2D.CompositingQuality.HighQuality;
+                //graphicTemp.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
+                //graphicTemp.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
+                //graphicTemp.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.HighQuality;
+                graphicTemp.DrawImage(bmp, 0, 0, iWidth, iHeight);
+                return NewBMP;
+            //graphicTemp.Dispose();
+            }
+            //System.Drawing.Imaging.EncoderParameters encoderParams = new System.Drawing.Imaging.EncoderParameters();
+            //System.Drawing.Imaging.EncoderParameter encoderParam = new System.Drawing.Imaging.EncoderParameter(System.Drawing.Imaging.Encoder.Quality, ImageQuality);
+            //encoderParams.Param[0] = encoderParam;
+            //System.Drawing.Imaging.ImageCodecInfo[] arrayICI = System.Drawing.Imaging.ImageCodecInfo.GetImageEncoders();
+            //for (int fwd = 0; fwd <= arrayICI.Length - 1; fwd++)
+            //{
+            //    if (arrayICI[fwd].FormatDescription.Equals("JPEG"))
+            //    {
+            //        NewBMP.Save(Des, arrayICI[fwd], encoderParams);
+            //    }
+            //}
+
+            //NewBMP.Dispose();
+            //bmp.Dispose();
         }
 
         public async void TakeAndSave(int left, int top, int width, int height,string path)

@@ -18,6 +18,9 @@ namespace QuickShoot.Helpers
         public static System.Windows.Media.ImageSource Background { get; set; }
         public static System.Drawing.Bitmap BMP { get; set; }//test
         public static System.Drawing.Bitmap BMPCropped { get; set; }//test
+        public static int WidthWithDPI { get; set; }
+        public static int HeightWithDPI { get; set; }
+
 
 
     }
