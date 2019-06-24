@@ -21,7 +21,5 @@ namespace QuickShoot.Helpers
         public static int WidthWithDPI { get; set; }
         public static int HeightWithDPI { get; set; }
 
-
-
     }
 }

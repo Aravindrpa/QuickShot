@@ -297,6 +297,7 @@
             <Canvas Name="canv_Img" 
                     MouseDown="canv_Img_MouseDown" 
                     MouseMove="canv_Img_MouseMove" 
+                    MouseUp="canv_Img_MouseUp"
                     Background="Transparent" 
                     SnapsToDevicePixels="True"
                     ClipToBounds="True"

@@ -1,5 +1,6 @@
 ﻿using QuickShoot.Helpers;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -27,13 +28,16 @@ namespace QuickShoot
         public Line line { get; set; }
         public Ellipse circle { get; set; }
         public TextBox text { get; set; }
-        public Border br { get; set; }
+        //public Border br { get; set; }
         public DShapes shape { get; set; }
         public DColors color { get; set; }
         public string FileName { get; set; }
 
         //private Task<BitmapSource> img_BlurAsync { get; set; }
         private Task<System.Drawing.Bitmap> img_EditAsync { get; set; }
+        private int MarkingCount { get; set; }
+        private ConcurrentDictionary<int,IShapeDetails> MarkingsDictionary { get; set; }
+        //private ConcurrentDictionary concurrentDictionary;
         //private Task<System.Drawing.Bitmap> imgTask { get; set; }
         //private Task<BitmapSource> copyTask { get; set; }
 
@@ -59,6 +63,9 @@ namespace QuickShoot
                 img_Blur.Opacity = 0;
                 blurEffect.Radius = 0;
             }
+
+            MarkingCount = 0;
+            MarkingsDictionary = new ConcurrentDictionary<int, IShapeDetails>();
         }
 
         //ENUMS
@@ -104,6 +111,9 @@ namespace QuickShoot
             //ImageBrush ib = new ImageBrush();
             //ib.ImageSource = convertTask.Result;
             //canv_Img.Background = ib;
+
+            if (Glob.Config.EnableOnlyClipboard)
+                SaveAndClose();
         }
         //private void editor_window_Closed(object sender, EventArgs e)
         //{
@@ -138,12 +148,20 @@ namespace QuickShoot
                     fileName = textb_FileName.Text + ".png";
 
             //this.FileName = fileName;
-
-            System.Drawing.Bitmap canvasShapeImage = CanvasImage(canv_Img);
-            var imgTask = Glob.ScreenShot.MergeAllBitmaps(Glob.BMPCropped, canvasShapeImage);
-            //isSave = true;
-            this.Close();
-            imgTask.Result.Save(Glob.folderManager.GetCurrentPath() + "\\" + fileName, System.Drawing.Imaging.ImageFormat.Png);
+            if (Glob.Config.EnableOnlyClipboard)
+            {
+                var imgTask = Glob.ScreenShot.ConvertBmpToSource(Glob.BMPCropped);
+                this.Close();
+                Clipboard.SetImage(imgTask.Result);
+            }
+            else
+            {
+                System.Drawing.Bitmap canvasShapeImage = CanvasImage(canv_Img);
+                var imgTask = Glob.ScreenShot.MergeAllBitmaps(Glob.BMPCropped, canvasShapeImage);
+                //isSave = true;
+                this.Close();
+                imgTask.Result.Save(Glob.folderManager.GetCurrentPath() + "\\" + fileName, System.Drawing.Imaging.ImageFormat.Png);
+            }
 
             //var p = img_Edit.PointToScreen(new Point());
             //int wid = 0;
@@ -370,7 +388,10 @@ namespace QuickShoot
             //    encoder.Save(file);
             //}
         }
-
+        private async void SaveShape<T>(int key,ShapeDetails<T> shape) where T: class
+        {
+            MarkingsDictionary.TryAdd(key, shape);
+        }
 
         //Control Event Handlers
         private void lbl_Close_MouseDown(object sender, MouseButtonEventArgs e)
@@ -397,23 +418,24 @@ namespace QuickShoot
             startPoint = Mouse.GetPosition(canv_Img);
             if (e.ButtonState == MouseButtonState.Pressed)
             {
-
                 switch (shape)
                 {
                     case (DShapes.Rectangle):
-                        br = new Border();
-                        Canvas.SetLeft(br, startPoint.X);
-                        Canvas.SetTop(br, startPoint.Y);
+                        MarkingCount++;
+                        //br = new Border();
                         rect = new Rectangle();
                         rect.Stroke = Glob.Config.SelectedBrush;
                         rect.StrokeThickness = 2.2;                       
-                        br.BorderThickness = new Thickness(2);
-                        br.BorderBrush = Brushes.Transparent;
-                        br.Effect = effect;
-                        br.Child = rect;
-                        canv_Img.Children.Add(br);
+                        //br.BorderThickness = new Thickness(2);
+                        //br.BorderBrush = Brushes.Transparent;
+                        rect.Effect = effect;
+                        Canvas.SetLeft(rect, startPoint.X);
+                        Canvas.SetTop(rect, startPoint.Y);
+                        //br.Child = rect;
+                        canv_Img.Children.Add(rect);
                         break;
                     case (DShapes.Line):
+                        MarkingCount++;
                         line = new Line();
                         line.Stroke = Glob.Config.SelectedBrush;
                         line.StrokeThickness = 2.2;
@@ -423,6 +445,7 @@ namespace QuickShoot
                         canv_Img.Children.Add(line);
                         break;
                     case (DShapes.Text):
+                        MarkingCount++;
                         text = new TextBox();
                         text.Foreground = Glob.Config.SelectedBrush;
                         text.Background = Brushes.Transparent;
@@ -439,10 +462,11 @@ namespace QuickShoot
                         canv_Img.Children.Add(text);
                         //text.SelectAll();
                         Keyboard.Focus(text);
-                        text.LostFocus += Text_LostFocus;
+                        text.LostFocus += Text_LostFocus; //do the text add to MarkingsDictionary in lost focus
                         text.TextChanged += Text_TextChanged;
                         break;
                     case (DShapes.Circle):
+                        MarkingCount++;
                         circle = new Ellipse();
                         circle.Stroke = Glob.Config.SelectedBrush;
                         circle.StrokeThickness = 2.2;
@@ -464,6 +488,7 @@ namespace QuickShoot
         {
             TextBox tb = sender as TextBox;
             tb.BorderThickness = new Thickness(0, 0, 0, 0);
+            Task.Run(() => SaveShape<TextBox>(MarkingCount, new ShapeDetails<TextBox>(tb)));
         }
         private void canv_Img_MouseMove(object sender, MouseEventArgs e)
         {
@@ -481,7 +506,7 @@ namespace QuickShoot
                             if (pointNow.X < startPoint.X)
                             {
                                 wid = startPoint.X - pointNow.X;
-                                Canvas.SetLeft(br, pointNow.X);
+                                Canvas.SetLeft(rect, pointNow.X);
                             }
                             else
                                 wid = pointNow.X - startPoint.X;
@@ -489,7 +514,7 @@ namespace QuickShoot
                             if (pointNow.Y < startPoint.Y)
                             {
                                 hei = startPoint.Y - pointNow.Y;
-                                Canvas.SetTop(br, pointNow.Y);
+                                Canvas.SetTop(rect, pointNow.Y);
                             }
                             else
                                 hei = pointNow.Y - startPoint.Y;
@@ -528,6 +553,22 @@ namespace QuickShoot
             }
             catch
             { }
+        }
+        private void canv_Img_MouseUp(object sender, MouseButtonEventArgs e)
+        {
+            switch (shape)
+            {
+                case (DShapes.Rectangle):
+                    Task.Run(() => SaveShape<Rectangle>(MarkingCount, new ShapeDetails<Rectangle>(rect)));
+                    break;
+                case (DShapes.Line):
+                    Task.Run(() => SaveShape<Line>(MarkingCount, new ShapeDetails<Line>(line)));
+                    break;
+                case (DShapes.Circle):
+                    Task.Run(() => SaveShape<Ellipse>(MarkingCount, new ShapeDetails<Ellipse>(circle)));
+                    break;
+
+            }
         }
         private void lbl_Save_MouseDown(object sender, MouseButtonEventArgs e)
         {
@@ -570,5 +611,19 @@ namespace QuickShoot
             CopyImage();
         }
 
+        
+    }
+
+    public interface IShapeDetails
+    {
+        //Marker interface //this is the simplest solution
+    }
+    public class ShapeDetails<T> : IShapeDetails
+    {
+        public T StoredShape { get; set; }
+        public ShapeDetails(T shape)
+        {
+            StoredShape = shape;
+        }
     }
 }

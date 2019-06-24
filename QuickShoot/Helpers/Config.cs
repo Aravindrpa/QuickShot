@@ -14,6 +14,7 @@ namespace QuickShoot.Helpers
         public bool EnableAnimations { get; set; }
         public bool EnableBlurEffect { get; set; }
         public bool EnableLiteMode { get; set; }
+        public bool EnableOnlyClipboard { get; set; }
         public double BlurRadious { get; set; }
         public double EditorBackgroundOpacity { get; set; }
 

@@ -89,6 +89,7 @@
     <Compile Include="Helpers\Glob.cs" />
     <Compile Include="Helpers\GlobalKeyboardHook.cs" />
     <Compile Include="Helpers\ScreenShot.cs" />
+    <Compile Include="Helpers\ShapesModifier.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>

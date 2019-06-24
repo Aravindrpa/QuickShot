@@ -44,6 +44,7 @@ namespace QuickShoot
             Glob.Config.EnableAnimations = true;
             Glob.Config.EnableBlurEffect = true;
             Glob.Config.EnableLiteMode = false;
+            Glob.Config.EnableOnlyClipboard = false;
             Glob.Config.BlurRadious = 7;
             Glob.Config.EditorBackgroundOpacity = .8;
 

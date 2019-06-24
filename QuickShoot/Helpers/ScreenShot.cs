@@ -74,6 +74,7 @@ namespace QuickShoot.Helpers
             }
             else if (bmp1.Width < bmp1.Height)
             {
+                //C:\Users\ar\Documents\GitRepos\QuickShot-actual\QuickShot\QuickShoot\CaptureWindow.xaml
                 bmp1 = Resize_Picture(bmp1, 0, Glob.HeightWithDPI);
                 bmp2 = Resize_Picture(bmp2, 0, Glob.HeightWithDPI);
             }
