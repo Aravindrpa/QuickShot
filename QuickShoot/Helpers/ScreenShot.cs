@@ -22,15 +22,15 @@ namespace QuickShoot.Helpers
             double screenHeight = SystemParameters.VirtualScreenHeight;
             int screenWidthdpi = 0;
             int screenHeightdpi = 0;
-            TransformToPixels(screenWidth, screenHeight, out screenWidthdpi, out screenHeightdpi);
+            Glob.TransformToPixels(screenWidth, screenHeight, out screenWidthdpi, out screenHeightdpi);
 
             var bmp = await CopyFromBounds((int)screenLeft, (int)screenTop, screenWidthdpi, screenHeightdpi);
-            return await ConvertBmpToSource(bmp);
+            return await bmp.ConvertToBitmapSource();
         }
         public async Task<BitmapSource> Take(int left, int top, int width, int height)
         {
             var bmp = await CopyFromBounds(left, top, width, height);
-            return await ConvertBmpToSource(bmp);
+            return await bmp.ConvertToBitmapSource();
         }
         public async Task<Bitmap> TakeBitmap()
         {
@@ -40,122 +40,20 @@ namespace QuickShoot.Helpers
             double screenHeight = SystemParameters.VirtualScreenHeight;
             int screenWidthdpi = 0;
             int screenHeightdpi = 0;
-            TransformToPixels(screenWidth, screenHeight, out screenWidthdpi, out screenHeightdpi);
+            Glob.TransformToPixels(screenWidth, screenHeight, out screenWidthdpi, out screenHeightdpi);
 
             return await CopyFromBounds((int)screenLeft, (int)screenTop, screenWidthdpi, screenHeightdpi);
         }
-
-        public async Task<Bitmap> Crop(Bitmap bmp,int x1, int y1, int width, int height)
+        public async Task<Bitmap> CopyFromBounds(int left, int top, int width, int height)
         {
-            Rectangle cropRect = new Rectangle(x1, y1, width, height);
-            return await Crop(bmp, cropRect);
+            Bitmap bmp = new Bitmap(width, height);
+            using (Graphics g = Graphics.FromImage(bmp))
+            {
+                g.CopyFromScreen(left, top, 0, 0, bmp.Size);
+                return bmp;
+            }
         }
-        public async Task<Bitmap> Crop(Bitmap bmp, Rectangle rect)
-        {
-            Bitmap target = new Bitmap(rect.Width, rect.Height);
-            using (Graphics g = Graphics.FromImage(target))
-            {
-                g.DrawImage(bmp,
-                    new Rectangle(0, 0, target.Width, target.Height),
-                    rect,
-                    GraphicsUnit.Pixel);
-            }
-            return target;
-        }
-        public async Task<Bitmap> MergeAllBitmaps(Bitmap bmp1, Bitmap bmp2)
-        {
-
-            Bitmap finalImage = null;
-
-            if (bmp1.Width > bmp1.Height)
-            {
-                bmp1 = Resize_Picture(bmp1, Glob.WidthWithDPI, 0);
-                bmp2 = Resize_Picture(bmp2, Glob.WidthWithDPI, 0);
-            }
-            else if (bmp1.Width < bmp1.Height)
-            {
-                //C:\Users\ar\Documents\GitRepos\QuickShot-actual\QuickShot\QuickShoot\CaptureWindow.xaml
-                bmp1 = Resize_Picture(bmp1, 0, Glob.HeightWithDPI);
-                bmp2 = Resize_Picture(bmp2, 0, Glob.HeightWithDPI);
-            }
-            else if (bmp1.Width == bmp1.Height)
-            {
-                bmp1 = Resize_Picture(bmp1, Glob.WidthWithDPI, Glob.HeightWithDPI);
-                bmp2 = Resize_Picture(bmp2, Glob.WidthWithDPI, Glob.HeightWithDPI);
-            }
-
-            finalImage = new Bitmap(bmp1.Width,bmp1.Height, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
-
-            //bmp2.Save(Glob.folderManager.GetCurrentPath() + "\\shp-" + filename);
-            //new Bitmap(Glob.WidthWithDPI, Glob.HeightWithDPI, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
-            using (Graphics graphics = Graphics.FromImage(finalImage))//get the underlying graphics object from the image.
-            {
-                //graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
-                //graphics.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
-                //graphics.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.HighQuality;
-                //graphics.CompositingQuality = System.Drawing.Drawing2D.CompositingQuality.HighQuality;
-
-                graphics.DrawImage(bmp1, new Rectangle(0, 0, bmp1.Width, bmp1.Height));
-                graphics.DrawImage(bmp2, new Rectangle(0, 0, bmp1.Width, bmp1.Height)); //convert/strech to bmp1 size 
-
-                return finalImage;
-            }
-
-        }
-
-        public static Bitmap Resize_Picture(Bitmap bmp, int FinalWidth, int FinalHeight)
-        {
-            System.Drawing.Bitmap NewBMP;
-            System.Drawing.Graphics graphicTemp;
-
-
-            int iWidth;
-            int iHeight;
-            if ((FinalHeight == 0) && (FinalWidth != 0))
-            {
-                iWidth = FinalWidth;
-                iHeight = (bmp.Size.Height * iWidth / bmp.Size.Width);
-            }
-            else if ((FinalHeight != 0) && (FinalWidth == 0))
-            {
-                iHeight = FinalHeight;
-                iWidth = (bmp.Size.Width * iHeight / bmp.Size.Height);
-            }
-            else
-            {
-                iWidth = FinalWidth;
-                iHeight = FinalHeight;
-            }
-
-            NewBMP = new System.Drawing.Bitmap(iWidth, iHeight);
-            using (graphicTemp = System.Drawing.Graphics.FromImage(NewBMP))
-            { 
-                //graphicTemp.CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceOver;
-                //graphicTemp.CompositingQuality = System.Drawing.Drawing2D.CompositingQuality.HighQuality;
-                //graphicTemp.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
-                //graphicTemp.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
-                //graphicTemp.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.HighQuality;
-                graphicTemp.DrawImage(bmp, 0, 0, iWidth, iHeight);
-                return NewBMP;
-            //graphicTemp.Dispose();
-            }
-            //System.Drawing.Imaging.EncoderParameters encoderParams = new System.Drawing.Imaging.EncoderParameters();
-            //System.Drawing.Imaging.EncoderParameter encoderParam = new System.Drawing.Imaging.EncoderParameter(System.Drawing.Imaging.Encoder.Quality, ImageQuality);
-            //encoderParams.Param[0] = encoderParam;
-            //System.Drawing.Imaging.ImageCodecInfo[] arrayICI = System.Drawing.Imaging.ImageCodecInfo.GetImageEncoders();
-            //for (int fwd = 0; fwd <= arrayICI.Length - 1; fwd++)
-            //{
-            //    if (arrayICI[fwd].FormatDescription.Equals("JPEG"))
-            //    {
-            //        NewBMP.Save(Des, arrayICI[fwd], encoderParams);
-            //    }
-            //}
-
-            //NewBMP.Dispose();
-            //bmp.Dispose();
-        }
-
-        public async void TakeAndSave(int left, int top, int width, int height,string path)
+        public async void TakeAndSave(int left, int top, int width, int height, string path)
         {
             Bitmap bmp = await CopyFromBounds(left, top, width, height);
             //Attach shadow try1
@@ -191,46 +89,52 @@ namespace QuickShoot.Helpers
 
             bmp.Save(path, System.Drawing.Imaging.ImageFormat.Png);
         }
-        public async Task<BitmapSource> ConvertBmpToSource(Bitmap bmp)
-        {
-            return Imaging.CreateBitmapSourceFromHBitmap(
-                    bmp.GetHbitmap(),
-                    IntPtr.Zero,
-                    Int32Rect.Empty,
-                    BitmapSizeOptions.FromEmptyOptions());
-        }
-        public Bitmap ConvertSourceToBmp(BitmapSource bitmapsource)
-        {
-            Bitmap bitmap;
-            using (var outStream = new MemoryStream())
-            {
-                BitmapEncoder enc = new BmpBitmapEncoder();
-                enc.Frames.Add(BitmapFrame.Create(bitmapsource));
-                enc.Save(outStream);
-                bitmap = new Bitmap(outStream);
-            }
-            return bitmap;
-        }
-        public async Task<Bitmap> CopyFromBounds(int left, int top, int width, int height)
-        {
-            Bitmap bmp = new Bitmap(width, height);          
-            using (Graphics g = Graphics.FromImage(bmp))
-            {
-                g.CopyFromScreen(left, top, 0, 0, bmp.Size);
-                return bmp;
-            } 
-        }
-        public static void TransformToPixels(double unitX,
-                               double unitY,
-                               out int pixelX,
-                               out int pixelY)
-        {
-            using (Graphics g = Graphics.FromHwnd(IntPtr.Zero))
-            {
-                pixelX = (int)((g.DpiX / 96) * unitX);
-                pixelY = (int)((g.DpiY / 96) * unitY);
-            }
 
+
+        public void test(Bitmap canvasImage, System.Collections.Concurrent.ConcurrentDictionary<int, IShapeDetails> MarkingsDictionary)
+        {
+            //Correct resolution test
+            System.Drawing.Bitmap finalImage = new System.Drawing.Bitmap(Glob.BMPCropped.Width, Glob.BMPCropped.Height, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+            int widthPer = ((Glob.BMPCropped.Width - canvasImage.Width)/Glob.BMPCropped.Width); 
+            //bmp2.Save(Glob.folderManager.GetCurrentPath() + "\\shp-" + filename);
+            //new Bitmap(Glob.WidthWithDPI, Glob.HeightWithDPI, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+            using (System.Drawing.Graphics graphics = System.Drawing.Graphics.FromImage(finalImage))//get the underlying graphics object from the image.
+            {
+
+                graphics.DrawImage(Glob.BMPCropped, new Rectangle(0, 0, Glob.BMPCropped.Width, Glob.BMPCropped.Height));
+                // graphics.DrawImage(bmp2, new Rectangle(0, 0, bmp1.Width, bmp1.Height)); //convert/strech to bmp1 size 
+
+                foreach (var item in MarkingsDictionary)
+                {
+                    var sshape = item.Value.GetStoredShape();
+
+                    if (sshape.GetType() == typeof(System.Windows.Shapes.Rectangle))
+                    {
+                        Console.WriteLine(sshape);
+                        var ss = sshape;
+                        //graphics.DrawRectangle(new Pen(Brushes.Beige), (System.Windows.Shapes.Rectangle)sshape);
+                        //graphics.DrawEllipse(new Pen(Brushes.Beige))
+                    }
+                    //else if (sshape.GetType() == typeof(Line))
+                    //{
+                    //}
+                    //else if (sshape.GetType() == typeof(Ellipse))
+                    //{
+
+                    //}
+                    //else if (sshape.GetType() == typeof(TextBox))
+                    //{
+
+                    //}
+
+                }
+                
+
+            }
+           
+            
         }
+
+
     }
 }

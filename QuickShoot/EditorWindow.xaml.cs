@@ -4,6 +4,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -48,7 +49,7 @@ namespace QuickShoot
         {
             //img_BlurAsync = Glob.ScreenShot.Take();
             //img_EditAsync = Glob.ScreenShot.Take(left, top, height, width);
-            img_EditAsync = Glob.ScreenShot.Crop(Glob.BMP, left, top, width, height);
+            img_EditAsync = Glob.BMP.Crop(left, top, width, height);
             InitializeComponent();
 
             if (Glob.Config.EnableBlurEffect)
@@ -90,7 +91,7 @@ namespace QuickShoot
             //img_Edit.Width = canv_Img.ActualWidth - 80;
             //img_Edit.Height = canv_Img.ActualHeight - 80;
             Glob.BMPCropped = img_EditAsync.Result;
-            var convertTask = Glob.ScreenShot.ConvertBmpToSource(Glob.BMPCropped);
+            var convertTask = Glob.BMPCropped.ConvertToBitmapSource();
             //Glob.BMPCropped.Save("D:\\test.png", System.Drawing.Imaging.ImageFormat.Png);
             SetShape(DShapes.Rectangle);
             SetColor(DColors.Green);
@@ -106,14 +107,14 @@ namespace QuickShoot
                 img_Blur.Source = Glob.Background; //Glob.Background;
 
             img_Edit.Source = convertTask.Result;
-            //var p = img_Edit.PointToScreen(new Point());
+            //var p = img_Edit.TranslatePoint(new Point(),grid_Blur);
             //MessageBox.Show(p.X + "-" + p.Y);
             //ImageBrush ib = new ImageBrush();
             //ib.ImageSource = convertTask.Result;
             //canv_Img.Background = ib;
 
             if (Glob.Config.EnableOnlyClipboard)
-                SaveAndClose();
+                SaveAndClose(); //close it here itself, no need for editor 
         }
         //private void editor_window_Closed(object sender, EventArgs e)
         //{
@@ -150,18 +151,19 @@ namespace QuickShoot
             //this.FileName = fileName;
             if (Glob.Config.EnableOnlyClipboard)
             {
-                var imgTask = Glob.ScreenShot.ConvertBmpToSource(Glob.BMPCropped);
+                var imgTask = Glob.BMPCropped.ConvertToBitmapSource();
                 this.Close();
                 Clipboard.SetImage(imgTask.Result);
             }
             else
             {
-                System.Drawing.Bitmap canvasShapeImage = CanvasImage(canv_Img);
-                var imgTask = Glob.ScreenShot.MergeAllBitmaps(Glob.BMPCropped, canvasShapeImage);
+                var imgTask = Glob.MergeAllBitmaps(Glob.BMPCropped, canv_Img.ExportCanvasImage().Result);
                 //isSave = true;
                 this.Close();
                 imgTask.Result.Save(Glob.folderManager.GetCurrentPath() + "\\" + fileName, System.Drawing.Imaging.ImageFormat.Png);
             }
+
+            Glob.ScreenShot.test(canv_Img.ExportCanvasImage().Result, MarkingsDictionary);
 
             //var p = img_Edit.PointToScreen(new Point());
             //int wid = 0;
@@ -218,9 +220,8 @@ namespace QuickShoot
             //var task = Glob.ScreenShot.ConvertBmpToSource(bmp.Result);
 
             //async result is not helping here, no async calls -- maybe a serial call would be faster??
-            System.Drawing.Bitmap canvasShapeImage = CanvasImage(canv_Img);
-            var firstTask = Glob.ScreenShot.MergeAllBitmaps(Glob.BMPCropped, canvasShapeImage);
-            var copyTask = Glob.ScreenShot.ConvertBmpToSource(firstTask.Result);
+            var firstTask = Glob.MergeAllBitmaps(Glob.BMPCropped, canv_Img.ExportCanvasImage().Result);
+            var copyTask = firstTask.Result.ConvertToBitmapSource();
             //isCopy = true;
             this.Close();
             Clipboard.SetImage(copyTask.Result);//after calling close - bit faster putting here
@@ -361,34 +362,8 @@ namespace QuickShoot
                     break;
             }
         }
-        private System.Drawing.Bitmap CanvasImage(Canvas canvas)
-        {
-            int wid = 0; int hei = 0;
-            //ScreenShot.TransformToPixels(canvas.ActualWidth, canvas.ActualHeight, out wid, out hei);
-            wid = (int)canvas.ActualWidth;
-            hei = (int)canvas.ActualHeight;
-            RenderTargetBitmap renderBitmap = new RenderTargetBitmap(
-             wid, hei,
-             96d, 96d, PixelFormats.Pbgra32);
-            // needed otherwise the image output is black
-            canvas.Measure(new Size(wid, hei));
-            canvas.Arrange(new Rect(new Size(wid, hei)));
-
-            //renderBitmap.Render(img);
-            renderBitmap.Render(canvas);
-
-            //JpegBitmapEncoder encoder = new JpegBitmapEncoder();
-            MemoryStream stream = new MemoryStream();
-            PngBitmapEncoder encoder = new PngBitmapEncoder();
-            encoder.Frames.Add(BitmapFrame.Create(renderBitmap));
-            encoder.Save(stream);
-            return new System.Drawing.Bitmap(stream);
-            //using (FileStream file = File.Create(Glob.folderManager.GetCurrentPath() + "\\can-" + fileName))
-            //{
-            //    encoder.Save(file);
-            //}
-        }
-        private async void SaveShape<T>(int key,ShapeDetails<T> shape) where T: class
+        
+        private void SaveShape<T>(int key,ShapeDetails<T> shape) where T: class
         {
             MarkingsDictionary.TryAdd(key, shape);
         }
@@ -486,9 +461,10 @@ namespace QuickShoot
         }
         private void Text_LostFocus(object sender, RoutedEventArgs e)
         {
-            TextBox tb = sender as TextBox;
+            TextBox tb = sender as TextBox;           
             tb.BorderThickness = new Thickness(0, 0, 0, 0);
-            Task.Run(() => SaveShape<TextBox>(MarkingCount, new ShapeDetails<TextBox>(tb)));
+            var p = canv_Img.TranslatePoint(new Point(), grid_Blur);//TODO : move to top
+            Task.Run(() => SaveShape<TextBox>(MarkingCount, new ShapeDetails<TextBox>(tb,p.X,p.Y, canv_Img.ActualWidth, canv_Img.ActualHeight, grid_Blur)));
         }
         private void canv_Img_MouseMove(object sender, MouseEventArgs e)
         {
@@ -554,21 +530,29 @@ namespace QuickShoot
             catch
             { }
         }
-        private void canv_Img_MouseUp(object sender, MouseButtonEventArgs e)
+        private async void canv_Img_MouseUp(object sender, MouseButtonEventArgs e)
         {
+            //TODO: any mouse up outside canvas bounds will not work - will not save - put it under background mouseup
+
+            var p = canv_Img.TranslatePoint(new Point(), grid_Blur);//TODO: move to top
             switch (shape)
             {
                 case (DShapes.Rectangle):
-                    Task.Run(() => SaveShape<Rectangle>(MarkingCount, new ShapeDetails<Rectangle>(rect)));
+                    //await Task.Run(() => SaveShape<Rectangle>(MarkingCount, new ShapeDetails<Rectangle>(rect,p.X,p.Y, grid_Blur)));
+                    SaveShape<Rectangle>(MarkingCount, new ShapeDetails<Rectangle>(rect, p.X, p.Y,canv_Img.ActualWidth,canv_Img.ActualHeight, grid_Blur));
                     break;
                 case (DShapes.Line):
-                    Task.Run(() => SaveShape<Line>(MarkingCount, new ShapeDetails<Line>(line)));
+                    SaveShape<Line>(MarkingCount, new ShapeDetails<Line>(line,p.X, p.Y, canv_Img.ActualWidth, canv_Img.ActualHeight, grid_Blur));
                     break;
                 case (DShapes.Circle):
-                    Task.Run(() => SaveShape<Ellipse>(MarkingCount, new ShapeDetails<Ellipse>(circle)));
+                    SaveShape<Ellipse>(MarkingCount, new ShapeDetails<Ellipse>(circle, p.X, p.Y, canv_Img.ActualWidth, canv_Img.ActualHeight, grid_Blur));
                     break;
 
             }
+            //var p = canv_Img.TranslatePoint(new Point(), grid_Blur);
+            //MessageBox.Show(p.X + "-" + p.Y);
+            //var p1 = rect.TranslatePoint(new Point(), grid_Blur);
+            //MessageBox.Show(p1.X + "-" + p1.Y);
         }
         private void lbl_Save_MouseDown(object sender, MouseButtonEventArgs e)
         {
@@ -616,14 +600,46 @@ namespace QuickShoot
 
     public interface IShapeDetails
     {
-        //Marker interface //this is the simplest solution
+        //Marker interface //this is the simplest solution -- //not needed to be mrker interface
+        dynamic GetStoredShape();
+        Point GetStartPoint();
     }
-    public class ShapeDetails<T> : IShapeDetails
+    public class ShapeDetails<T>  : IShapeDetails
     {
-        public T StoredShape { get; set; }
-        public ShapeDetails(T shape)
+        public dynamic StoredShape { get; set; }
+        public Point StartPoint { get; set; }
+        public double parentx { get; set; }
+        public double parenty { get; set; }
+        public double parentw { get; set; }
+        public double parenth { get; set; }
+        public Point EndPoint { get; set; }
+
+        public ShapeDetails(T shape,double parentX,double parentY, double parentW, double parentH, UIElement refObject) 
         {
             StoredShape = shape;
+            parentx = parentX;
+            parenty = parentY;
+            parentw = parentW;
+            parenth = parentH;
+            var shapeType = shape.GetType();
+            MethodInfo t = shapeType.GetMethod("TranslatePoint", new[] { typeof(Point), typeof(UIElement) });
+            StartPoint = (Point)t.Invoke(shape, new object[] { new Point(), refObject});
+            double w = (double)shape.GetType().GetProperty("Width").GetValue(shape);
+            double h = (double)shape.GetType().GetProperty("Height").GetValue(shape);
+            EndPoint = new Point(StartPoint.X + w, StartPoint.Y + h);            
+            //MethodInfo t = shapeType.GetMethod("TranslatePoint", new [] {typeof(Point), typeof(UIElement) });
+            //StartPoint = (Point)t.Invoke(shape, new object[] { new Point(), refObject});
+            //EndPoint = new Point(StartPoint.X+);
+            //MessageBox.Show(r + "str");
+        }
+        public Point GetStartPoint()
+        {
+            return StartPoint;
+        }
+
+        public dynamic GetStoredShape()
+        {
+            return StoredShape;
         }
     }
 }

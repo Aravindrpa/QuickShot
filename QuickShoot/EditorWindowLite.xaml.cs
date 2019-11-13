@@ -38,7 +38,7 @@ namespace QuickShoot
         {
             //img_BlurAsync = Glob.ScreenShot.Take();
             //img_EditAsync = Glob.ScreenShot.Take(left, top, height, width);
-            img_EditAsync = Glob.ScreenShot.Crop(Glob.BMP, left, top, width, height);
+            img_EditAsync = Glob.BMP.Crop( left, top, width, height);
             InitializeComponent();
 
         }
@@ -64,7 +64,7 @@ namespace QuickShoot
             //img_Edit.Width = canv_Img.ActualWidth - 80;
             //img_Edit.Height = canv_Img.ActualHeight - 80;
             Glob.BMPCropped = img_EditAsync.Result;
-            var convertTask = Glob.ScreenShot.ConvertBmpToSource(Glob.BMPCropped);
+            var convertTask = Glob.BMPCropped.ConvertToBitmapSource();
             SetShape(DShapes.Rectangle);
             SetColor(DColors.Green);
             //Glob.Animate.Breath(lbl_FileName);
@@ -106,7 +106,7 @@ namespace QuickShoot
             var p = img_Edit.PointToScreen(new Point());
             int wid = 0;
             int hei = 0;
-            ScreenShot.TransformToPixels(img_Edit.ActualWidth, img_Edit.ActualHeight, out wid, out hei);
+            Glob.TransformToPixels(img_Edit.ActualWidth, img_Edit.ActualHeight, out wid, out hei);
             var bmp = Glob.ScreenShot.CopyFromBounds(
                 (int)p.X,
                 (int)p.Y,
@@ -133,12 +133,12 @@ namespace QuickShoot
             var p = img_Edit.PointToScreen(new Point());
             int wid = 0;
             int hei = 0;
-            ScreenShot.TransformToPixels(img_Edit.ActualWidth, img_Edit.ActualHeight, out wid, out hei);
+            Glob.TransformToPixels(img_Edit.ActualWidth, img_Edit.ActualHeight, out wid, out hei);
             var bmp = Glob.ScreenShot.CopyFromBounds(
                 (int)p.X,
                 (int)p.Y,
                 wid, hei);
-            var task = Glob.ScreenShot.ConvertBmpToSource(bmp.Result);
+            var task = bmp.Result.ConvertToBitmapSource();
             Clipboard.SetImage(task.Result);
             this.Close();
         }

@@ -46,9 +46,9 @@ namespace QuickShoot
             br = new Border();
             rect = new Rectangle();
             Glob.BMP = task.Result;
-            var anotherTask = Glob.ScreenShot.ConvertBmpToSource(Glob.BMP);
+            var anotherTask = Glob.BMP.ConvertToBitmapSource();
 
-            ScreenShot.TransformToPixels(screenWidth, screenHeight, out screenWidthdpi, out screenHeightdpi);
+            Glob.TransformToPixels(screenWidth, screenHeight, out screenWidthdpi, out screenHeightdpi);
             Glob.WidthWithDPI = screenWidthdpi;
             Glob.HeightWithDPI = screenHeightdpi;
             brThickness = screenWidthdpi * 2; //to make sure the border has enough thickness to overflow the screen area while capturing
@@ -140,7 +140,7 @@ namespace QuickShoot
             int hei = 0;
 
             //CORRECT DPI again 
-            ScreenShot.TransformToPixels(
+            Glob.TransformToPixels(
                 //Canvas.GetLeft(br) + brThickness-3,
                 //Canvas.GetTop(br) + brThickness-3
                 startPoint.X - 3,
@@ -148,7 +148,7 @@ namespace QuickShoot
                 , out l, out t);
 
             var p = Mouse.GetPosition(canvas_Draw);
-            ScreenShot.TransformToPixels(
+            Glob.TransformToPixels(
                 p.X - 3,
                 p.Y - 3
                 , out l1, out t1);
