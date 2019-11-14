@@ -49,8 +49,8 @@ namespace QuickShoot
             var anotherTask = Glob.BMP.ConvertToBitmapSource();
 
             Glob.TransformToPixels(screenWidth, screenHeight, out screenWidthdpi, out screenHeightdpi);
-            Glob.WidthWithDPI = screenWidthdpi;
-            Glob.HeightWithDPI = screenHeightdpi;
+            Glob.ScreenWidthWithDPI = screenWidthdpi;
+            Glob.ScreenHeightWithDPI = screenHeightdpi;
             brThickness = screenWidthdpi * 2; //to make sure the border has enough thickness to overflow the screen area while capturing
 
             br = new Border();

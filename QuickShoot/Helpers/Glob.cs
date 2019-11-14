@@ -19,8 +19,8 @@ namespace QuickShoot.Helpers
         public static System.Windows.Media.ImageSource Background { get; set; }
         public static System.Drawing.Bitmap BMP { get; set; }//test
         public static System.Drawing.Bitmap BMPCropped { get; set; }//test
-        public static int WidthWithDPI { get; set; }
-        public static int HeightWithDPI { get; set; }
+        public static int ScreenWidthWithDPI { get; set; }
+        public static int ScreenHeightWithDPI { get; set; }
 
 
         public static async Task<Bitmap> MergeAllBitmaps(Bitmap bmp1, Bitmap bmp2)
@@ -30,21 +30,21 @@ namespace QuickShoot.Helpers
 
             if (bmp1.Width > bmp1.Height)
             {
-                var bmpT = bmp1.Resize_Picture(Glob.WidthWithDPI, 0); //goes async
-                bmp2 = await bmp2.Resize_Picture(Glob.WidthWithDPI, 0);//does get result
+                var bmpT = bmp1.Resize_Picture(Glob.ScreenWidthWithDPI, 0); //goes async
+                bmp2 = await bmp2.Resize_Picture(Glob.ScreenWidthWithDPI, 0);//does get result
                 bmp1 = await bmpT;//result of alresdy completed task --- speed tweeks
             }
             else if (bmp1.Width < bmp1.Height)
             {
                 //C:\Users\ar\Documents\GitRepos\QuickShot-actual\QuickShot\QuickShoot\CaptureWindow.xaml
-                var bmpT = bmp1.Resize_Picture(0, Glob.HeightWithDPI);  //goes async
-                bmp2 = await bmp2.Resize_Picture(0, Glob.HeightWithDPI);//does get result
+                var bmpT = bmp1.Resize_Picture(0, Glob.ScreenHeightWithDPI);  //goes async
+                bmp2 = await bmp2.Resize_Picture(0, Glob.ScreenHeightWithDPI);//does get result
                 bmp1 = await bmpT;//result of alresdy completed task --- speed tweeks
             }
             else if (bmp1.Width == bmp1.Height)
             {
-                var bmpT = bmp1.Resize_Picture(Glob.WidthWithDPI, Glob.HeightWithDPI);  //goes async
-                bmp2 = await bmp2.Resize_Picture(Glob.WidthWithDPI, Glob.HeightWithDPI);//does get result
+                var bmpT = bmp1.Resize_Picture(Glob.ScreenWidthWithDPI, Glob.ScreenHeightWithDPI);  //goes async
+                bmp2 = await bmp2.Resize_Picture(Glob.ScreenWidthWithDPI, Glob.ScreenHeightWithDPI);//does get result
                 bmp1 = await bmpT;//result of alresdy completed task --- speed tweeks
             }
 

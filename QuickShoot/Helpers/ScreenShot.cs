@@ -4,7 +4,10 @@ using System.Drawing;
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Interop;
+using System.Windows.Media;
+using System.Windows.Media.Effects;
 using System.Windows.Media.Imaging;
 
 namespace QuickShoot.Helpers
@@ -91,48 +94,65 @@ namespace QuickShoot.Helpers
         }
 
 
-        public void test(Bitmap canvasImage, System.Collections.Concurrent.ConcurrentDictionary<int, IShapeDetails> MarkingsDictionary)
+        public void test(Canvas canv_Img, System.Collections.Concurrent.ConcurrentDictionary<int, IShapeDetails> MarkingsDictionary, string fileName)
         {
             //Correct resolution test
-            System.Drawing.Bitmap finalImage = new System.Drawing.Bitmap(Glob.BMPCropped.Width, Glob.BMPCropped.Height, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
-            int widthPer = ((Glob.BMPCropped.Width - canvasImage.Width)/Glob.BMPCropped.Width); 
-            //bmp2.Save(Glob.folderManager.GetCurrentPath() + "\\shp-" + filename);
-            //new Bitmap(Glob.WidthWithDPI, Glob.HeightWithDPI, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
-            using (System.Drawing.Graphics graphics = System.Drawing.Graphics.FromImage(finalImage))//get the underlying graphics object from the image.
+            double widthDiff = Glob.BMPCropped.Width - canv_Img.Width > 0 ? (double)Glob.BMPCropped.Width - canv_Img.Width : (double)canv_Img.Width - Glob.BMPCropped.Width;
+            bool isSmallWidth = Glob.BMPCropped.Width - canv_Img.Width > 0 ? false : true;
+            double heightDiff = Glob.BMPCropped.Height - canv_Img.Height > 0 ? (double)Glob.BMPCropped.Height - canv_Img.Height : (double)canv_Img.Height - Glob.BMPCropped.Height;
+            bool isSmallHeight = Glob.BMPCropped.Height - canv_Img.Height > 0 ? false : true;
+
+            double widthPer = !isSmallWidth ? widthDiff / Glob.BMPCropped.Width : widthDiff / canv_Img.Width;
+            double heightPer = !isSmallHeight ? heightDiff / Glob.BMPCropped.Height : heightDiff / canv_Img.Height;
+
+            Canvas canv = new Canvas();
+            canv.Height = Glob.BMPCropped.Height;
+            canv.Width = Glob.BMPCropped.Width;
+            ImageBrush ib = new ImageBrush();
+            ib.ImageSource = Glob.BMPCropped.ConvertToImageSource();
+            canv.Background = ib;
+
+            //bmp.Result.Save(Glob.folderManager.GetCurrentPath() + "\\" + fileName, System.Drawing.Imaging.ImageFormat.Png);
+            var effect = new DropShadowEffect();
+            effect.Direction = 320;
+            effect.BlurRadius = 5.5;
+            effect.ShadowDepth = 4.5;
+            System.Windows.Shapes.Rectangle rect = null;
+            System.Windows.Shapes.Ellipse circ = null;
+            System.Windows.Shapes.Line line = null;
+            System.Windows.Controls.TextBox text = null;
+            foreach (var item in MarkingsDictionary)
             {
-
-                graphics.DrawImage(Glob.BMPCropped, new Rectangle(0, 0, Glob.BMPCropped.Width, Glob.BMPCropped.Height));
-                // graphics.DrawImage(bmp2, new Rectangle(0, 0, bmp1.Width, bmp1.Height)); //convert/strech to bmp1 size 
-
-                foreach (var item in MarkingsDictionary)
+                var shapeDetail = item.Value;
+                if (shapeDetail.StoredShapeType == typeof(System.Windows.Shapes.Rectangle))
                 {
-                    var sshape = item.Value.GetStoredShape();
-
-                    if (sshape.GetType() == typeof(System.Windows.Shapes.Rectangle))
+                    rect = new System.Windows.Shapes.Rectangle
                     {
-                        Console.WriteLine(sshape);
-                        var ss = sshape;
-                        //graphics.DrawRectangle(new Pen(Brushes.Beige), (System.Windows.Shapes.Rectangle)sshape);
-                        //graphics.DrawEllipse(new Pen(Brushes.Beige))
-                    }
-                    //else if (sshape.GetType() == typeof(Line))
-                    //{
-                    //}
-                    //else if (sshape.GetType() == typeof(Ellipse))
-                    //{
-
-                    //}
-                    //else if (sshape.GetType() == typeof(TextBox))
-                    //{
-
-                    //}
-
+                        Stroke = Glob.Config.SelectedBrush,
+                        StrokeThickness = 2.2,
+                        Effect = effect,
+                        Height = shapeDetail.height + (shapeDetail.height + heightPer),
+                        Width = shapeDetail.width + (shapeDetail.width + widthPer)
+                    };
+                    Canvas.SetLeft(rect, shapeDetail.StartPoint.X);
+                    Canvas.SetTop(rect, shapeDetail.StartPoint.Y);
+                    canv.Children.Add(rect);
                 }
-                
 
+                else if (shapeDetail.StoredShapeType == typeof(System.Windows.Shapes.Ellipse))
+                {
+                }
+                else if (shapeDetail.StoredShapeType == typeof(System.Windows.Shapes.Line))
+                {
+                }
+                else if (shapeDetail.StoredShapeType == typeof(System.Windows.Controls.TextBox))
+                {
+                }
             }
-           
-            
+            var img = canv.ExportCanvasImage().Result;
+            img.Save(Glob.folderManager.GetCurrentPath() + "\\" + fileName+"-test.png", System.Drawing.Imaging.ImageFormat.Png);
+
+
         }
 
 

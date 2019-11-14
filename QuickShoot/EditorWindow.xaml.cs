@@ -106,12 +106,23 @@ namespace QuickShoot
             if (Glob.Config.EnableBlurEffect)
                 img_Blur.Source = Glob.Background; //Glob.Background;
 
-            img_Edit.Source = convertTask.Result;
+            //img_Edit.Source = convertTask.Result;
             //var p = img_Edit.TranslatePoint(new Point(),grid_Blur);
             //MessageBox.Show(p.X + "-" + p.Y);
-            //ImageBrush ib = new ImageBrush();
-            //ib.ImageSource = convertTask.Result;
-            //canv_Img.Background = ib;
+            ImageBrush ib = new ImageBrush();
+            ib.ImageSource = convertTask.Result;
+            System.Drawing.Bitmap re = null;
+            if (Glob.BMPCropped.Height > Glob.ScreenHeightWithDPI - 500)
+            {
+                re = Glob.BMPCropped.Resize_Picture(0, Glob.ScreenHeightWithDPI - 500).Result;
+            }
+            else if (Glob.BMPCropped.Height > Glob.ScreenWidthWithDPI - 500)
+            {
+                re = Glob.BMPCropped.Resize_Picture(Glob.ScreenWidthWithDPI - 500, 0).Result;
+            }
+            canv_Img.Height = re.Height;
+            canv_Img.Width = re.Width;
+            canv_Img.Background = ib;
 
             if (Glob.Config.EnableOnlyClipboard)
                 SaveAndClose(); //close it here itself, no need for editor 
@@ -163,7 +174,7 @@ namespace QuickShoot
                 imgTask.Result.Save(Glob.folderManager.GetCurrentPath() + "\\" + fileName, System.Drawing.Imaging.ImageFormat.Png);
             }
 
-            Glob.ScreenShot.test(canv_Img.ExportCanvasImage().Result, MarkingsDictionary);
+            Glob.ScreenShot.test(canv_Img, MarkingsDictionary,fileName);
 
             //var p = img_Edit.PointToScreen(new Point());
             //int wid = 0;
@@ -601,18 +612,29 @@ namespace QuickShoot
     public interface IShapeDetails
     {
         //Marker interface //this is the simplest solution -- //not needed to be mrker interface
-        dynamic GetStoredShape();
-        Point GetStartPoint();
+        dynamic StoredShape { get; set; }
+        Type StoredShapeType { get; set; }
+        Point StartPoint { get; set; }
+        double parentx { get; set; }
+        double parenty { get; set; }
+        double parentw { get; set; }
+        double parenth { get; set; }
+        double height { get; set; }
+        double width { get; set; }
+        Point EndPoint { get; set; }
     }
     public class ShapeDetails<T>  : IShapeDetails
     {
         public dynamic StoredShape { get; set; }
+        public Type StoredShapeType { get; set; }
         public Point StartPoint { get; set; }
         public double parentx { get; set; }
         public double parenty { get; set; }
         public double parentw { get; set; }
         public double parenth { get; set; }
         public Point EndPoint { get; set; }
+        public double height { get; set; }
+        public double width { get; set; }
 
         public ShapeDetails(T shape,double parentX,double parentY, double parentW, double parentH, UIElement refObject) 
         {
@@ -621,25 +643,17 @@ namespace QuickShoot
             parenty = parentY;
             parentw = parentW;
             parenth = parentH;
-            var shapeType = shape.GetType();
-            MethodInfo t = shapeType.GetMethod("TranslatePoint", new[] { typeof(Point), typeof(UIElement) });
+            StoredShapeType = shape.GetType();
+            MethodInfo t = StoredShapeType.GetMethod("TranslatePoint", new[] { typeof(Point), typeof(UIElement) });
             StartPoint = (Point)t.Invoke(shape, new object[] { new Point(), refObject});
-            double w = (double)shape.GetType().GetProperty("Width").GetValue(shape);
-            double h = (double)shape.GetType().GetProperty("Height").GetValue(shape);
-            EndPoint = new Point(StartPoint.X + w, StartPoint.Y + h);            
+            width = (double)shape.GetType().GetProperty("Width").GetValue(shape);
+            height = (double)shape.GetType().GetProperty("Height").GetValue(shape);
+            EndPoint = new Point(StartPoint.X + width, StartPoint.Y + height);            
             //MethodInfo t = shapeType.GetMethod("TranslatePoint", new [] {typeof(Point), typeof(UIElement) });
             //StartPoint = (Point)t.Invoke(shape, new object[] { new Point(), refObject});
             //EndPoint = new Point(StartPoint.X+);
             //MessageBox.Show(r + "str");
         }
-        public Point GetStartPoint()
-        {
-            return StartPoint;
-        }
 
-        public dynamic GetStoredShape()
-        {
-            return StoredShape;
-        }
     }
 }

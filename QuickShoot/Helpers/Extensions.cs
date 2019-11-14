@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -107,8 +108,8 @@ namespace QuickShoot.Helpers
         {
             int wid = 0; int hei = 0;
             //ScreenShot.TransformToPixels(canvas.ActualWidth, canvas.ActualHeight, out wid, out hei);
-            wid = (int)canvas.ActualWidth;
-            hei = (int)canvas.ActualHeight;
+            wid = canvas.ActualWidth !=0 ? (int)canvas.ActualWidth : (int)canvas.Width;
+            hei = canvas.ActualHeight != 0 ? (int)canvas.ActualHeight : (int)canvas.Height;
             RenderTargetBitmap renderBitmap = new RenderTargetBitmap(
              wid, hei,
              96d, 96d, PixelFormats.Pbgra32);
@@ -129,6 +130,19 @@ namespace QuickShoot.Helpers
             //{
             //    encoder.Save(file);
             //}
+        }
+        [DllImport("gdi32.dll", EntryPoint = "DeleteObject")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public static extern bool DeleteObject([In] IntPtr hObject);
+
+        public static ImageSource ConvertToImageSource(this Bitmap bmp)
+        {
+            var handle = bmp.GetHbitmap();
+            try
+            {
+                return Imaging.CreateBitmapSourceFromHBitmap(handle, IntPtr.Zero, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
+            }
+            finally { DeleteObject(handle); }
         }
     }
 }
