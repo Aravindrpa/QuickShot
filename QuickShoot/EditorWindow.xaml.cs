@@ -112,13 +112,15 @@ namespace QuickShoot
             ImageBrush ib = new ImageBrush();
             ib.ImageSource = convertTask.Result;
             System.Drawing.Bitmap re = null;
-            if (Glob.BMPCropped.Height > Glob.ScreenHeightWithDPI - 500)
+            var heightPer = Convert.ToInt16(Glob.ScreenHeightWithDPI.GetPercentage(23));
+            var widthPer = Convert.ToInt16(Glob.ScreenWidthWithDPI.GetPercentage(23));
+            if (Glob.BMPCropped.Height > Glob.ScreenHeightWithDPI - heightPer * 2)
             {
-                re = Glob.BMPCropped.Resize_Picture(0, Glob.ScreenHeightWithDPI - 500).Result;
+                re = Glob.BMPCropped.Resize_Picture(0, Glob.ScreenHeightWithDPI - heightPer * 2).Result;
             }
-            else if (Glob.BMPCropped.Height > Glob.ScreenWidthWithDPI - 500)
+            else if (Glob.BMPCropped.Height > Glob.ScreenWidthWithDPI - widthPer * 2)
             {
-                re = Glob.BMPCropped.Resize_Picture(Glob.ScreenWidthWithDPI - 500, 0).Result;
+                re = Glob.BMPCropped.Resize_Picture(Glob.ScreenWidthWithDPI - widthPer * 2, 0).Result;
             }
             canv_Img.Height = re.Height;
             canv_Img.Width = re.Width;
@@ -541,16 +543,28 @@ namespace QuickShoot
             catch
             { }
         }
+        private Tuple<double, double, double, double> CalcSourceShapeData(Point parentP,Point childP)
+        {
+            double left = Math.Round(100 * ((childP.X - parentP.X) / canv_Img.ActualWidth), 2);
+            double top = Math.Round(100 * ((childP.Y - parentP.Y) / canv_Img.ActualHeight), 2);
+            double right = Math.Round(100 * ((canv_Img.ActualWidth - ((childP.X - parentP.X) + rect.ActualWidth)) / canv_Img.ActualWidth), 2);
+            double bottom = Math.Round(100 * ((canv_Img.ActualHeight - ((childP.Y - parentP.Y) + rect.ActualHeight)) / canv_Img.ActualHeight), 2);
+
+            return new Tuple<double, double, double, double>(left, top, right, bottom);
+        }
         private async void canv_Img_MouseUp(object sender, MouseButtonEventArgs e)
         {
             //TODO: any mouse up outside canvas bounds will not work - will not save - put it under background mouseup
 
-            var p = canv_Img.TranslatePoint(new Point(), grid_Blur);//TODO: move to top
+            var p = canv_Img.TranslatePoint(new Point(), canv_Img);//TODO: move to top
+
             switch (shape)
             {
                 case (DShapes.Rectangle):
                     //await Task.Run(() => SaveShape<Rectangle>(MarkingCount, new ShapeDetails<Rectangle>(rect,p.X,p.Y, grid_Blur)));
-                    SaveShape<Rectangle>(MarkingCount, new ShapeDetails<Rectangle>(rect, p.X, p.Y,canv_Img.ActualWidth,canv_Img.ActualHeight, grid_Blur));
+                    var d = rect.TranslatePoint(new Point(), canv_Img);
+                    var tu = CalcSourceShapeData(p, d);
+                    SaveShape<Rectangle>(MarkingCount, new ShapeDetails<Rectangle>(rect, tu.Item1,tu.Item2,tu.Item3,tu.Item4, grid_Blur));
                     break;
                 case (DShapes.Line):
                     SaveShape<Line>(MarkingCount, new ShapeDetails<Line>(line,p.X, p.Y, canv_Img.ActualWidth, canv_Img.ActualHeight, grid_Blur));
@@ -621,6 +635,10 @@ namespace QuickShoot
         double parenth { get; set; }
         double height { get; set; }
         double width { get; set; }
+        double Left { get; set; }
+        double Right { get; set; }
+        double Top { get; set; }
+        double Bottom { get; set; }
         Point EndPoint { get; set; }
     }
     public class ShapeDetails<T>  : IShapeDetails
@@ -636,13 +654,24 @@ namespace QuickShoot
         public double height { get; set; }
         public double width { get; set; }
 
-        public ShapeDetails(T shape,double parentX,double parentY, double parentW, double parentH, UIElement refObject) 
+        public double Left { get; set; }
+        public double Right { get; set; }
+        public double Top { get; set; }
+        public double Bottom { get; set; }
+
+
+        //public ShapeDetails(T shape,double parentX,double parentY, double parentW, double parentH, UIElement refObject) 
+        public ShapeDetails(T shape, double left, double top, double right, double bottom, UIElement refObject)
         {
+            Left = left;
+            Top = top;
+            Right = right;
+            Bottom = bottom;
             StoredShape = shape;
-            parentx = parentX;
-            parenty = parentY;
-            parentw = parentW;
-            parenth = parentH;
+            //parentx = parentX;
+            //parenty = parentY;
+            //parentw = parentW;
+            //parenth = parentH;
             StoredShapeType = shape.GetType();
             MethodInfo t = StoredShapeType.GetMethod("TranslatePoint", new[] { typeof(Point), typeof(UIElement) });
             StartPoint = (Point)t.Invoke(shape, new object[] { new Point(), refObject});

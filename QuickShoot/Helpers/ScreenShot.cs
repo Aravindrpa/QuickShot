@@ -93,17 +93,27 @@ namespace QuickShoot.Helpers
             bmp.Save(path, System.Drawing.Imaging.ImageFormat.Png);
         }
 
+        private Tuple<double, double, double, double> ShapeCalculate(double left, double top, double right, double bottom)
+        {
+            double x = (left / 100) * Glob.BMPCropped.Width; 
+            double y = (top / 100) * Glob.BMPCropped.Height;
+            double r = Glob.BMPCropped.Width - ((right / 100) * Glob.BMPCropped.Width);
+            double b = Glob.BMPCropped.Height - ((bottom / 100) * Glob.BMPCropped.Height);
+            double width = r - x;
+            double height = b - y;
+            return new Tuple<double, double, double,double>(x,y,width,height);
+        }
 
         public void test(Canvas canv_Img, System.Collections.Concurrent.ConcurrentDictionary<int, IShapeDetails> MarkingsDictionary, string fileName)
         {
             //Correct resolution test
-            double widthDiff = Glob.BMPCropped.Width - canv_Img.Width > 0 ? (double)Glob.BMPCropped.Width - canv_Img.Width : (double)canv_Img.Width - Glob.BMPCropped.Width;
-            bool isSmallWidth = Glob.BMPCropped.Width - canv_Img.Width > 0 ? false : true;
-            double heightDiff = Glob.BMPCropped.Height - canv_Img.Height > 0 ? (double)Glob.BMPCropped.Height - canv_Img.Height : (double)canv_Img.Height - Glob.BMPCropped.Height;
-            bool isSmallHeight = Glob.BMPCropped.Height - canv_Img.Height > 0 ? false : true;
+            //double widthDiff = Glob.BMPCropped.Width - canv_Img.Width > 0 ? (double)Glob.BMPCropped.Width - canv_Img.Width : (double)canv_Img.Width - Glob.BMPCropped.Width;
+            //bool isSmallWidth = Glob.BMPCropped.Width - canv_Img.Width > 0 ? false : true;
+            //double heightDiff = Glob.BMPCropped.Height - canv_Img.Height > 0 ? (double)Glob.BMPCropped.Height - canv_Img.Height : (double)canv_Img.Height - Glob.BMPCropped.Height;
+            //bool isSmallHeight = Glob.BMPCropped.Height - canv_Img.Height > 0 ? false : true;
 
-            double widthPer = !isSmallWidth ? widthDiff / Glob.BMPCropped.Width : widthDiff / canv_Img.Width;
-            double heightPer = !isSmallHeight ? heightDiff / Glob.BMPCropped.Height : heightDiff / canv_Img.Height;
+            //double widthPer = !isSmallWidth ? widthDiff / Glob.BMPCropped.Width : widthDiff / canv_Img.Width;
+            //double heightPer = !isSmallHeight ? heightDiff / Glob.BMPCropped.Height : heightDiff / canv_Img.Height;
 
             Canvas canv = new Canvas();
             canv.Height = Glob.BMPCropped.Height;
@@ -124,6 +134,7 @@ namespace QuickShoot.Helpers
             foreach (var item in MarkingsDictionary)
             {
                 var shapeDetail = item.Value;
+                var tu = ShapeCalculate(shapeDetail.Left, shapeDetail.Top, shapeDetail.Right, shapeDetail.Bottom);
                 if (shapeDetail.StoredShapeType == typeof(System.Windows.Shapes.Rectangle))
                 {
                     rect = new System.Windows.Shapes.Rectangle
@@ -131,11 +142,15 @@ namespace QuickShoot.Helpers
                         Stroke = Glob.Config.SelectedBrush,
                         StrokeThickness = 2.2,
                         Effect = effect,
-                        Height = shapeDetail.height + (shapeDetail.height + heightPer),
-                        Width = shapeDetail.width + (shapeDetail.width + widthPer)
+                        //Height = shapeDetail.height + (shapeDetail.height + heightPer),
+                        //Width = shapeDetail.width + (shapeDetail.width + widthPer)
+                        Width = tu.Item3,
+                        Height = tu.Item4
                     };
-                    Canvas.SetLeft(rect, shapeDetail.StartPoint.X);
-                    Canvas.SetTop(rect, shapeDetail.StartPoint.Y);
+                    //Canvas.SetLeft(rect, shapeDetail.StartPoint.X);
+                    //Canvas.SetTop(rect, shapeDetail.StartPoint.Y);
+                    Canvas.SetLeft(rect, tu.Item1);
+                    Canvas.SetTop(rect, tu.Item2);
                     canv.Children.Add(rect);
                 }
 

@@ -144,5 +144,10 @@ namespace QuickShoot.Helpers
             }
             finally { DeleteObject(handle); }
         }
+
+        public static float GetPercentage(this int value, float percentage)
+        {
+            return (float)value * (percentage / 100);
+        }
     }
 }
