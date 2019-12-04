@@ -93,7 +93,7 @@ namespace QuickShoot.Helpers
             bmp.Save(path, System.Drawing.Imaging.ImageFormat.Png);
         }
 
-        private Tuple<double, double, double, double> ShapeCalculate(double left, double top, double right, double bottom)
+        private Tuple<double, double,double,double,double, double> ShapeCalculate(double left, double top, double right, double bottom)
         {
             double x = (left / 100) * Glob.BMPCropped.Width; 
             double y = (top / 100) * Glob.BMPCropped.Height;
@@ -101,7 +101,7 @@ namespace QuickShoot.Helpers
             double b = Glob.BMPCropped.Height - ((bottom / 100) * Glob.BMPCropped.Height);
             double width = r - x;
             double height = b - y;
-            return new Tuple<double, double, double,double>(x,y,width,height);
+            return new Tuple<double, double, double, double, double,double>(x,y,r,b,width,height);
         }
 
         public void test(Canvas canv_Img, System.Collections.Concurrent.ConcurrentDictionary<int, IShapeDetails> MarkingsDictionary, string fileName)
@@ -133,36 +133,127 @@ namespace QuickShoot.Helpers
             System.Windows.Controls.TextBox text = null;
             foreach (var item in MarkingsDictionary)
             {
+                effect.BlurRadius = 5.5;
+                effect.ShadowDepth = 4.5;
                 var shapeDetail = item.Value;
                 var tu = ShapeCalculate(shapeDetail.Left, shapeDetail.Top, shapeDetail.Right, shapeDetail.Bottom);
                 if (shapeDetail.StoredShapeType == typeof(System.Windows.Shapes.Rectangle))
                 {
                     rect = new System.Windows.Shapes.Rectangle
                     {
-                        Stroke = Glob.Config.SelectedBrush,
+                        Stroke = shapeDetail.brush,
                         StrokeThickness = 2.2,
                         Effect = effect,
-                        //Height = shapeDetail.height + (shapeDetail.height + heightPer),
-                        //Width = shapeDetail.width + (shapeDetail.width + widthPer)
-                        Width = tu.Item3,
-                        Height = tu.Item4
+                        Width = tu.Item5,
+                        Height = tu.Item6
                     };
-                    //Canvas.SetLeft(rect, shapeDetail.StartPoint.X);
-                    //Canvas.SetTop(rect, shapeDetail.StartPoint.Y);
                     Canvas.SetLeft(rect, tu.Item1);
                     Canvas.SetTop(rect, tu.Item2);
                     canv.Children.Add(rect);
                 }
-
                 else if (shapeDetail.StoredShapeType == typeof(System.Windows.Shapes.Ellipse))
                 {
+                    circ = new System.Windows.Shapes.Ellipse
+                    {
+                        Stroke = shapeDetail.brush,
+                        StrokeThickness = 2.2,
+                        Effect = effect,
+                        Width = tu.Item5,
+                        Height = tu.Item6
+                    };
+                    Canvas.SetLeft(circ, tu.Item1);
+                    Canvas.SetTop(circ, tu.Item2);
+                    canv.Children.Add(circ);
                 }
                 else if (shapeDetail.StoredShapeType == typeof(System.Windows.Shapes.Line))
                 {
+                    if (shapeDetail.LineInvert)
+                    {
+                        line = new System.Windows.Shapes.Line
+                        {
+                            Stroke = shapeDetail.brush,
+                            StrokeThickness = 2.2,
+                            X1 = tu.Item3,
+                            Y1 = tu.Item2,
+                            X2 = tu.Item1,
+                            Y2 = tu.Item4,
+                            Effect = effect
+                        };
+                    }
+                    else
+                    {
+                        line = new System.Windows.Shapes.Line
+                        {
+                            Stroke = shapeDetail.brush,
+                            StrokeThickness = 2.2,
+                            X1 = tu.Item1,
+                            Y1 = tu.Item2,
+                            X2 = tu.Item3,
+                            Y2 = tu.Item4,
+                            Effect = effect
+                        };
+                    }
+                    canv.Children.Add(line);
                 }
                 else if (shapeDetail.StoredShapeType == typeof(System.Windows.Controls.TextBox))
                 {
+                    effect.ShadowDepth = 1;
+                    effect.BlurRadius = 3;
+                    text = new TextBox()
+                    {
+                        Foreground = shapeDetail.brush,
+                        Background = System.Windows.Media.Brushes.Transparent,
+                        BorderBrush = shapeDetail.brush,
+                        BorderThickness = new Thickness(2, 0, 0, 2),
+                        Effect = effect,
+                        FontSize = 50
+                    };
+                    Canvas.SetLeft(text, tu.Item1);
+                    Canvas.SetTop(text, tu.Item2);
+                    canv.Children.Add(text);
                 }
+
+                //case (DShapes.Line):
+                //        MarkingCount++;
+                //line = new Line();
+                //line.Stroke = Glob.Config.SelectedBrush;
+                //line.StrokeThickness = 2.2;
+                //line.X1 = startPoint.X;
+                //line.Y1 = startPoint.Y;
+                //line.Effect = effect;
+                //canv_Img.Children.Add(line);
+                //break;
+                //    case (DShapes.Text):
+                //        MarkingCount++;
+                //text = new TextBox();
+                //text.Foreground = Glob.Config.SelectedBrush;
+                //text.Background = Brushes.Transparent;
+                //text.BorderBrush = Glob.Config.SelectedBrush;
+                //text.BorderThickness = new Thickness(2, 0, 0, 2);
+                //effect.ShadowDepth = 1;
+                //effect.BlurRadius = 3;
+                //text.Effect = effect;
+                ////label.Padding = new Thickness(5,5,5,5);
+                ////label.BorderThickness = new Thickness(0);
+                //text.FontSize = 18;
+                //Canvas.SetLeft(text, startPoint.X);
+                //Canvas.SetTop(text, startPoint.Y);
+                //canv_Img.Children.Add(text);
+                ////text.SelectAll();
+                //Keyboard.Focus(text);
+                //text.LostFocus += Text_LostFocus; //do the text add to MarkingsDictionary in lost focus
+                //text.TextChanged += Text_TextChanged;
+                //break;
+                //    case (DShapes.Circle):
+                //        MarkingCount++;
+                //circle = new Ellipse();
+                //circle.Stroke = Glob.Config.SelectedBrush;
+                //circle.StrokeThickness = 2.2;
+                //circle.Effect = effect;
+                //Canvas.SetLeft(circle, startPoint.X);
+                //Canvas.SetTop(circle, startPoint.Y);
+                //canv_Img.Children.Add(circle);
+                //break;
             }
             var img = canv.ExportCanvasImage().Result;
             img.Save(Glob.folderManager.GetCurrentPath() + "\\" + fileName+"-test.png", System.Drawing.Imaging.ImageFormat.Png);

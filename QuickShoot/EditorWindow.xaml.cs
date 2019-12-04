@@ -29,11 +29,12 @@ namespace QuickShoot
         public Line line { get; set; }
         public Ellipse circle { get; set; }
         public TextBox text { get; set; }
+        public Rectangle mapperRect { get; set; }
         //public Border br { get; set; }
         public DShapes shape { get; set; }
         public DColors color { get; set; }
         public string FileName { get; set; }
-
+        bool lineInvert { get; set; }
         //private Task<BitmapSource> img_BlurAsync { get; set; }
         private Task<System.Drawing.Bitmap> img_EditAsync { get; set; }
         private int MarkingCount { get; set; }
@@ -404,8 +405,15 @@ namespace QuickShoot
             effect.ShadowDepth = 4.5;
 
             startPoint = Mouse.GetPosition(canv_Img);
+
             if (e.ButtonState == MouseButtonState.Pressed)
             {
+                mapperRect = new Rectangle();
+                //mapperRect.Stroke = Brushes.Aqua;
+                //mapperRect.StrokeThickness = 2.2;
+                Canvas.SetLeft(mapperRect, startPoint.X);
+                Canvas.SetTop(mapperRect, startPoint.Y);
+                canv_Img.Children.Add(mapperRect);
                 switch (shape)
                 {
                     case (DShapes.Rectangle):
@@ -477,7 +485,8 @@ namespace QuickShoot
             TextBox tb = sender as TextBox;           
             tb.BorderThickness = new Thickness(0, 0, 0, 0);
             var p = canv_Img.TranslatePoint(new Point(), grid_Blur);//TODO : move to top
-            Task.Run(() => SaveShape<TextBox>(MarkingCount, new ShapeDetails<TextBox>(tb,p.X,p.Y, canv_Img.ActualWidth, canv_Img.ActualHeight, grid_Blur)));
+            var tu = CalcSourceShapeData(p, mapperRect.TranslatePoint(new Point(), canv_Img), tb.ActualWidth, tb.ActualHeight);
+            Task.Run(() => SaveShape<TextBox>(MarkingCount, new ShapeDetails<TextBox>(tb,tu.Item1,tu.Item2,tu.Item3,tu.Item4, lineInvert, grid_Blur)));
         }
         private void canv_Img_MouseMove(object sender, MouseEventArgs e)
         {
@@ -485,10 +494,37 @@ namespace QuickShoot
             {
                 double wid = 0;
                 double hei = 0;
+                
                 var pointNow = Mouse.GetPosition(canv_Img); // new Point(X, Y);
 
                 if (e.LeftButton == MouseButtonState.Pressed)
                 {
+                    if (pointNow.X < startPoint.X && pointNow.Y < startPoint.Y)
+                        lineInvert = false;
+                    else if (pointNow.X < startPoint.X || pointNow.Y < startPoint.Y)
+                        lineInvert = true;
+                    else
+                        lineInvert = false;
+
+                    if (pointNow.X < startPoint.X)
+                    {
+                        wid = startPoint.X - pointNow.X;
+                        Canvas.SetLeft(mapperRect, pointNow.X);
+                    }
+                    else
+                        wid = pointNow.X - startPoint.X;
+
+                    if (pointNow.Y < startPoint.Y)
+                    {
+                        hei = startPoint.Y - pointNow.Y;
+                        Canvas.SetTop(mapperRect, pointNow.Y);
+                    }
+                    else
+                        hei = pointNow.Y - startPoint.Y;
+
+                    mapperRect.Width = wid;
+                    mapperRect.Height = hei;
+
                     switch (shape)
                     {
                         case (DShapes.Rectangle):
@@ -543,12 +579,12 @@ namespace QuickShoot
             catch
             { }
         }
-        private Tuple<double, double, double, double> CalcSourceShapeData(Point parentP,Point childP)
+        private Tuple<double, double, double, double> CalcSourceShapeData(Point parentP,Point childP, double shapeActualWidth, double shapeActualHeight)
         {
             double left = Math.Round(100 * ((childP.X - parentP.X) / canv_Img.ActualWidth), 2);
             double top = Math.Round(100 * ((childP.Y - parentP.Y) / canv_Img.ActualHeight), 2);
-            double right = Math.Round(100 * ((canv_Img.ActualWidth - ((childP.X - parentP.X) + rect.ActualWidth)) / canv_Img.ActualWidth), 2);
-            double bottom = Math.Round(100 * ((canv_Img.ActualHeight - ((childP.Y - parentP.Y) + rect.ActualHeight)) / canv_Img.ActualHeight), 2);
+            double right = Math.Round(100 * ((canv_Img.ActualWidth - ((childP.X - parentP.X) + shapeActualWidth)) / canv_Img.ActualWidth), 2);
+            double bottom = Math.Round(100 * ((canv_Img.ActualHeight - ((childP.Y - parentP.Y) + shapeActualHeight)) / canv_Img.ActualHeight), 2);
 
             return new Tuple<double, double, double, double>(left, top, right, bottom);
         }
@@ -557,20 +593,25 @@ namespace QuickShoot
             //TODO: any mouse up outside canvas bounds will not work - will not save - put it under background mouseup
 
             var p = canv_Img.TranslatePoint(new Point(), canv_Img);//TODO: move to top
-
+            //Tuple<double, double, double, double> tu = null;
+            var tu = CalcSourceShapeData(p, mapperRect.TranslatePoint(new Point(), canv_Img), mapperRect.ActualWidth, mapperRect.ActualHeight);
             switch (shape)
             {
+                
                 case (DShapes.Rectangle):
-                    //await Task.Run(() => SaveShape<Rectangle>(MarkingCount, new ShapeDetails<Rectangle>(rect,p.X,p.Y, grid_Blur)));
-                    var d = rect.TranslatePoint(new Point(), canv_Img);
-                    var tu = CalcSourceShapeData(p, d);
-                    SaveShape<Rectangle>(MarkingCount, new ShapeDetails<Rectangle>(rect, tu.Item1,tu.Item2,tu.Item3,tu.Item4, grid_Blur));
+                    //await Task.Run(() => SaveShape<Rectangle>(MarkingCount, new ShapeDetails<Rectangle>(rect,p.X,p.Y, grid_Blur)));                
+                    SaveShape<Rectangle>(MarkingCount, new ShapeDetails<Rectangle>(rect, tu.Item1,tu.Item2,tu.Item3,tu.Item4, lineInvert, grid_Blur));
                     break;
                 case (DShapes.Line):
-                    SaveShape<Line>(MarkingCount, new ShapeDetails<Line>(line,p.X, p.Y, canv_Img.ActualWidth, canv_Img.ActualHeight, grid_Blur));
+                    //UIElement container = VisualTreeHelper.GetParent(line) as UIElement;
+                    //Point relativeLocation = line.TranslatePoint(new Point(0, 0), container);
+                    //var dd = line.TranslatePoint(new Point(0, 0), canv_Img); //new Point(line.X1,line.Y1)
+                    //tu = CalcSourceShapeData(p,relativeLocation  , line.ActualWidth, line.ActualHeight);
+                    SaveShape<Line>(MarkingCount, new ShapeDetails<Line>(line, tu.Item1, tu.Item2, tu.Item3, tu.Item4, lineInvert,grid_Blur));                    
                     break;
                 case (DShapes.Circle):
-                    SaveShape<Ellipse>(MarkingCount, new ShapeDetails<Ellipse>(circle, p.X, p.Y, canv_Img.ActualWidth, canv_Img.ActualHeight, grid_Blur));
+                    //tu = CalcSourceShapeData(p, circle.TranslatePoint(new Point(), canv_Img), circle.ActualWidth, circle.ActualHeight);
+                    SaveShape<Ellipse>(MarkingCount, new ShapeDetails<Ellipse>(circle, tu.Item1, tu.Item2, tu.Item3, tu.Item4, lineInvert, grid_Blur));
                     break;
 
             }
@@ -640,6 +681,9 @@ namespace QuickShoot
         double Top { get; set; }
         double Bottom { get; set; }
         Point EndPoint { get; set; }
+        Rectangle MapperRect { get; set; }
+        Brush brush { get; set; }
+        bool LineInvert { get; set; }
     }
     public class ShapeDetails<T>  : IShapeDetails
     {
@@ -658,29 +702,35 @@ namespace QuickShoot
         public double Right { get; set; }
         public double Top { get; set; }
         public double Bottom { get; set; }
+        public Rectangle MapperRect { get ; set ; }
+        public Brush brush { get; set; }
+        public bool LineInvert { get; set; }
 
 
         //public ShapeDetails(T shape,double parentX,double parentY, double parentW, double parentH, UIElement refObject) 
-        public ShapeDetails(T shape, double left, double top, double right, double bottom, UIElement refObject)
+        public ShapeDetails(T shape, double left, double top, double right, double bottom,bool lineInvert, UIElement refObject)
+        //public ShapeDetails(T shape,Rectangle mapper, UIElement refObject)
         {
             Left = left;
             Top = top;
             Right = right;
             Bottom = bottom;
             StoredShape = shape;
+            brush = Glob.Config.SelectedBrush;
+            LineInvert = lineInvert;
             //parentx = parentX;
             //parenty = parentY;
             //parentw = parentW;
             //parenth = parentH;
             StoredShapeType = shape.GetType();
-            MethodInfo t = StoredShapeType.GetMethod("TranslatePoint", new[] { typeof(Point), typeof(UIElement) });
-            StartPoint = (Point)t.Invoke(shape, new object[] { new Point(), refObject});
-            width = (double)shape.GetType().GetProperty("Width").GetValue(shape);
-            height = (double)shape.GetType().GetProperty("Height").GetValue(shape);
-            EndPoint = new Point(StartPoint.X + width, StartPoint.Y + height);            
-            //MethodInfo t = shapeType.GetMethod("TranslatePoint", new [] {typeof(Point), typeof(UIElement) });
-            //StartPoint = (Point)t.Invoke(shape, new object[] { new Point(), refObject});
-            //EndPoint = new Point(StartPoint.X+);
+            //MethodInfo t = StoredShapeType.GetMethod("TranslatePoint", new[] { typeof(Point), typeof(UIElement) });
+            //StartPoint = (Point)t.Invoke(shape, new object[] { new Point(), refObject });
+            //width = (double)shape.GetType().GetProperty("Width").GetValue(shape);
+            //height = (double)shape.GetType().GetProperty("Height").GetValue(shape);
+            //EndPoint = new Point(StartPoint.X + width, StartPoint.Y + height);
+            //MethodInfo t = shapeType.GetMethod("TranslatePoint", new[] { typeof(Point), typeof(UIElement) });
+            //StartPoint = (Point)t.Invoke(shape, new object[] { new Point(), refObject });
+            //EndPoint = new Point(StartPoint.X +);
             //MessageBox.Show(r + "str");
         }
 
