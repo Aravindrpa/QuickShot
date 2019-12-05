@@ -57,7 +57,7 @@ namespace QuickShoot
             {
                 grid_Blur.Background = Brushes.Black;
                 img_Blur.Opacity = Glob.Config.EditorBackgroundOpacity;
-                blurEffect.Radius = Glob.Config.BlurRadious;
+                blurEffect.Radius = Glob.Config.BackgroundBlurRadious;
             }
             else
             {
@@ -68,6 +68,8 @@ namespace QuickShoot
 
             MarkingCount = 0;
             MarkingsDictionary = new ConcurrentDictionary<int, IShapeDetails>();
+
+           
         }
 
         //ENUMS
@@ -171,13 +173,13 @@ namespace QuickShoot
             }
             else
             {
-                var imgTask = Glob.MergeAllBitmaps(Glob.BMPCropped, canv_Img.ExportCanvasImage().Result);
+                //var imgTask = Glob.MergeAllBitmaps(Glob.BMPCropped, canv_Img.ExportCanvasImage().Result);
                 //isSave = true;
                 this.Close();
-                imgTask.Result.Save(Glob.folderManager.GetCurrentPath() + "\\" + fileName, System.Drawing.Imaging.ImageFormat.Png);
+                //imgTask.Result.Save(Glob.folderManager.GetCurrentPath() + "\\" + fileName, System.Drawing.Imaging.ImageFormat.Png);
+                Glob.ScreenShot.test(canv_Img, MarkingsDictionary, fileName);
             }
-
-            Glob.ScreenShot.test(canv_Img, MarkingsDictionary,fileName);
+            
 
             //var p = img_Edit.PointToScreen(new Point());
             //int wid = 0;
@@ -400,9 +402,9 @@ namespace QuickShoot
             //ABove not
 
             var effect = new DropShadowEffect();
-            effect.Direction = 320;
-            effect.BlurRadius = 5.5;
-            effect.ShadowDepth = 4.5;
+            effect.Direction = Glob.Config.ShapeShadowDirection;
+            effect.BlurRadius = Glob.Config.ShapeShadowBlurRadius;
+            effect.ShadowDepth = Glob.Config.ShapeShadowDepth;
 
             startPoint = Mouse.GetPosition(canv_Img);
 
@@ -421,7 +423,7 @@ namespace QuickShoot
                         //br = new Border();
                         rect = new Rectangle();
                         rect.Stroke = Glob.Config.SelectedBrush;
-                        rect.StrokeThickness = 2.2;                       
+                        rect.StrokeThickness = Glob.Config.ShapeThickness;                       
                         //br.BorderThickness = new Thickness(2);
                         //br.BorderBrush = Brushes.Transparent;
                         rect.Effect = effect;
@@ -434,7 +436,7 @@ namespace QuickShoot
                         MarkingCount++;
                         line = new Line();
                         line.Stroke = Glob.Config.SelectedBrush;
-                        line.StrokeThickness = 2.2;
+                        line.StrokeThickness = Glob.Config.ShapeThickness;
                         line.X1 = startPoint.X;
                         line.Y1 = startPoint.Y;
                         line.Effect = effect;
@@ -447,12 +449,12 @@ namespace QuickShoot
                         text.Background = Brushes.Transparent;
                         text.BorderBrush = Glob.Config.SelectedBrush;
                         text.BorderThickness = new Thickness(2, 0, 0, 2);
-                        effect.ShadowDepth = 1;
-                        effect.BlurRadius = 3;
+                        effect.ShadowDepth = Glob.Config.ShapeShadowDepthForText;
+                        effect.BlurRadius = Glob.Config.ShapeShadowBlurRadiusForText;
                         text.Effect = effect;
                         //label.Padding = new Thickness(5,5,5,5);
                         //label.BorderThickness = new Thickness(0);
-                        text.FontSize = 18;
+                        text.FontSize = Glob.Config.ShapeFontSize;
                         Canvas.SetLeft(text, startPoint.X);
                         Canvas.SetTop(text, startPoint.Y);
                         canv_Img.Children.Add(text);
@@ -465,7 +467,7 @@ namespace QuickShoot
                         MarkingCount++;
                         circle = new Ellipse();
                         circle.Stroke = Glob.Config.SelectedBrush;
-                        circle.StrokeThickness = 2.2;
+                        circle.StrokeThickness = Glob.Config.ShapeThickness;
                         circle.Effect = effect;
                         Canvas.SetLeft(circle, startPoint.X);
                         Canvas.SetTop(circle, startPoint.Y);
@@ -484,9 +486,9 @@ namespace QuickShoot
         {
             TextBox tb = sender as TextBox;           
             tb.BorderThickness = new Thickness(0, 0, 0, 0);
-            var p = canv_Img.TranslatePoint(new Point(), grid_Blur);//TODO : move to top
-            var tu = CalcSourceShapeData(p, mapperRect.TranslatePoint(new Point(), canv_Img), tb.ActualWidth, tb.ActualHeight);
-            Task.Run(() => SaveShape<TextBox>(MarkingCount, new ShapeDetails<TextBox>(tb,tu.Item1,tu.Item2,tu.Item3,tu.Item4, lineInvert, grid_Blur)));
+            //var p = canv_Img.TranslatePoint(new Point(), grid_Blur);//TODO : move to top
+            var tu = CalcSourceShapeData(new Point(0,0), mapperRect.TranslatePoint(new Point(), canv_Img), tb.ActualWidth, tb.ActualHeight);
+            SaveShape<TextBox>(MarkingCount, new ShapeDetails<TextBox>(tb,tu.Item1,tu.Item2,tu.Item3,tu.Item4, lineInvert,tb.Text));
         }
         private void canv_Img_MouseMove(object sender, MouseEventArgs e)
         {
@@ -600,18 +602,18 @@ namespace QuickShoot
                 
                 case (DShapes.Rectangle):
                     //await Task.Run(() => SaveShape<Rectangle>(MarkingCount, new ShapeDetails<Rectangle>(rect,p.X,p.Y, grid_Blur)));                
-                    SaveShape<Rectangle>(MarkingCount, new ShapeDetails<Rectangle>(rect, tu.Item1,tu.Item2,tu.Item3,tu.Item4, lineInvert, grid_Blur));
+                    SaveShape<Rectangle>(MarkingCount, new ShapeDetails<Rectangle>(rect, tu.Item1,tu.Item2,tu.Item3,tu.Item4, lineInvert));
                     break;
                 case (DShapes.Line):
                     //UIElement container = VisualTreeHelper.GetParent(line) as UIElement;
                     //Point relativeLocation = line.TranslatePoint(new Point(0, 0), container);
                     //var dd = line.TranslatePoint(new Point(0, 0), canv_Img); //new Point(line.X1,line.Y1)
                     //tu = CalcSourceShapeData(p,relativeLocation  , line.ActualWidth, line.ActualHeight);
-                    SaveShape<Line>(MarkingCount, new ShapeDetails<Line>(line, tu.Item1, tu.Item2, tu.Item3, tu.Item4, lineInvert,grid_Blur));                    
+                    SaveShape<Line>(MarkingCount, new ShapeDetails<Line>(line, tu.Item1, tu.Item2, tu.Item3, tu.Item4, lineInvert));                    
                     break;
                 case (DShapes.Circle):
                     //tu = CalcSourceShapeData(p, circle.TranslatePoint(new Point(), canv_Img), circle.ActualWidth, circle.ActualHeight);
-                    SaveShape<Ellipse>(MarkingCount, new ShapeDetails<Ellipse>(circle, tu.Item1, tu.Item2, tu.Item3, tu.Item4, lineInvert, grid_Blur));
+                    SaveShape<Ellipse>(MarkingCount, new ShapeDetails<Ellipse>(circle, tu.Item1, tu.Item2, tu.Item3, tu.Item4, lineInvert));
                     break;
 
             }
@@ -684,6 +686,7 @@ namespace QuickShoot
         Rectangle MapperRect { get; set; }
         Brush brush { get; set; }
         bool LineInvert { get; set; }
+        string TextContent { get; set; }
     }
     public class ShapeDetails<T>  : IShapeDetails
     {
@@ -705,10 +708,11 @@ namespace QuickShoot
         public Rectangle MapperRect { get ; set ; }
         public Brush brush { get; set; }
         public bool LineInvert { get; set; }
+        public string TextContent { get; set; }
 
 
         //public ShapeDetails(T shape,double parentX,double parentY, double parentW, double parentH, UIElement refObject) 
-        public ShapeDetails(T shape, double left, double top, double right, double bottom,bool lineInvert, UIElement refObject)
+        public ShapeDetails(T shape, double left, double top, double right, double bottom,bool lineInvert,string textContent="")
         //public ShapeDetails(T shape,Rectangle mapper, UIElement refObject)
         {
             Left = left;
@@ -718,6 +722,7 @@ namespace QuickShoot
             StoredShape = shape;
             brush = Glob.Config.SelectedBrush;
             LineInvert = lineInvert;
+            TextContent = textContent;
             //parentx = parentX;
             //parenty = parentY;
             //parentw = parentW;

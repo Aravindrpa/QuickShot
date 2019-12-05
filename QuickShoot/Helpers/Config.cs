@@ -15,8 +15,16 @@ namespace QuickShoot.Helpers
         public bool EnableBlurEffect { get; set; }
         public bool EnableLiteMode { get; set; }
         public bool EnableOnlyClipboard { get; set; }
-        public double BlurRadious { get; set; }
+        public int ThresholdValue { get; set; }
+        public double BackgroundBlurRadious { get; set; }
         public double EditorBackgroundOpacity { get; set; }
+        public double ShapeShadowBlurRadius { get; set; }
+        public double ShapeShadowDepth { get; set; }
+        public double ShapeShadowDirection { get; set; }
+        public double ShapeThickness { get; set; }
+        public double ShapeShadowBlurRadiusForText { get; set; }
+        public double ShapeShadowDepthForText { get; set; }
+        public double ShapeFontSize { get; set; }
 
     }
 }

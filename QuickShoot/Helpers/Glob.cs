@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Media;
 
 namespace QuickShoot.Helpers
 {
@@ -21,6 +22,8 @@ namespace QuickShoot.Helpers
         public static System.Drawing.Bitmap BMPCropped { get; set; }//test
         public static int ScreenWidthWithDPI { get; set; }
         public static int ScreenHeightWithDPI { get; set; }
+        public static double PrimaryScreenWidth { get; set; }
+        public static double PrimaryScreenHeight { get; set; }
 
 
         public static async Task<Bitmap> MergeAllBitmaps(Bitmap bmp1, Bitmap bmp2)
@@ -85,5 +88,32 @@ namespace QuickShoot.Helpers
             }
 
         }
+
+        public static void SetAdjustValues()
+        {
+            if (Glob.PrimaryScreenHeight < 1080)
+            {
+                Glob.Config.ShapeThickness = 2;
+                Glob.Config.ShapeShadowDepth = 3;
+                Glob.Config.ShapeShadowBlurRadius = 4;
+                Glob.Config.ShapeShadowBlurRadiusForText = 6;
+                Glob.Config.ShapeShadowDepthForText = 7;
+                Glob.Config.ShapeShadowDirection = 320;
+                Glob.Config.ShapeFontSize = 20;
+            }
+            else
+            {
+                Glob.Config.ShapeThickness = 3;
+                Glob.Config.ShapeShadowDepth = 4;
+                Glob.Config.ShapeShadowBlurRadius = 5;
+                Glob.Config.ShapeShadowBlurRadiusForText = 7;
+                Glob.Config.ShapeShadowDepthForText = 8;
+                Glob.Config.ShapeShadowDirection = 320;
+                Glob.Config.ShapeFontSize = 30;
+
+
+            }
+        }
+
     }
 }

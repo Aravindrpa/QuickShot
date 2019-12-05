@@ -124,17 +124,17 @@ namespace QuickShoot.Helpers
 
             //bmp.Result.Save(Glob.folderManager.GetCurrentPath() + "\\" + fileName, System.Drawing.Imaging.ImageFormat.Png);
             var effect = new DropShadowEffect();
-            effect.Direction = 320;
-            effect.BlurRadius = 5.5;
-            effect.ShadowDepth = 4.5;
+            effect.Direction = Glob.Config.ShapeShadowDirection;
+            //effect.BlurRadius = Glob.Config.ShapeShadowBlurRadius;
+            //effect.ShadowDepth = Glob.Config.ShapeShadowDepth;
             System.Windows.Shapes.Rectangle rect = null;
             System.Windows.Shapes.Ellipse circ = null;
             System.Windows.Shapes.Line line = null;
-            System.Windows.Controls.TextBox text = null;
+            System.Windows.Controls.Label text = null;
             foreach (var item in MarkingsDictionary)
             {
-                effect.BlurRadius = 5.5;
-                effect.ShadowDepth = 4.5;
+                effect.BlurRadius = Glob.Config.ShapeShadowBlurRadius;
+                effect.ShadowDepth = Glob.Config.ShapeShadowDepth;
                 var shapeDetail = item.Value;
                 var tu = ShapeCalculate(shapeDetail.Left, shapeDetail.Top, shapeDetail.Right, shapeDetail.Bottom);
                 if (shapeDetail.StoredShapeType == typeof(System.Windows.Shapes.Rectangle))
@@ -142,7 +142,7 @@ namespace QuickShoot.Helpers
                     rect = new System.Windows.Shapes.Rectangle
                     {
                         Stroke = shapeDetail.brush,
-                        StrokeThickness = 2.2,
+                        StrokeThickness = Glob.Config.ShapeThickness,
                         Effect = effect,
                         Width = tu.Item5,
                         Height = tu.Item6
@@ -156,7 +156,7 @@ namespace QuickShoot.Helpers
                     circ = new System.Windows.Shapes.Ellipse
                     {
                         Stroke = shapeDetail.brush,
-                        StrokeThickness = 2.2,
+                        StrokeThickness = Glob.Config.ShapeThickness,
                         Effect = effect,
                         Width = tu.Item5,
                         Height = tu.Item6
@@ -172,7 +172,7 @@ namespace QuickShoot.Helpers
                         line = new System.Windows.Shapes.Line
                         {
                             Stroke = shapeDetail.brush,
-                            StrokeThickness = 2.2,
+                            StrokeThickness = Glob.Config.ShapeThickness,
                             X1 = tu.Item3,
                             Y1 = tu.Item2,
                             X2 = tu.Item1,
@@ -185,7 +185,7 @@ namespace QuickShoot.Helpers
                         line = new System.Windows.Shapes.Line
                         {
                             Stroke = shapeDetail.brush,
-                            StrokeThickness = 2.2,
+                            StrokeThickness = Glob.Config.ShapeThickness,
                             X1 = tu.Item1,
                             Y1 = tu.Item2,
                             X2 = tu.Item3,
@@ -197,16 +197,17 @@ namespace QuickShoot.Helpers
                 }
                 else if (shapeDetail.StoredShapeType == typeof(System.Windows.Controls.TextBox))
                 {
-                    effect.ShadowDepth = 1;
-                    effect.BlurRadius = 3;
-                    text = new TextBox()
+                    effect.ShadowDepth = Glob.Config.ShapeShadowDepthForText;
+                    effect.BlurRadius = Glob.Config.ShapeShadowBlurRadiusForText;
+                    text = new Label()
                     {
                         Foreground = shapeDetail.brush,
                         Background = System.Windows.Media.Brushes.Transparent,
                         BorderBrush = shapeDetail.brush,
-                        BorderThickness = new Thickness(2, 0, 0, 2),
+                        //BorderThickness = new Thickness(2, 0, 0, 2),
                         Effect = effect,
-                        FontSize = 50
+                        FontSize = Glob.Config.ShapeFontSize,
+                        Content = shapeDetail.TextContent
                     };
                     Canvas.SetLeft(text, tu.Item1);
                     Canvas.SetTop(text, tu.Item2);
@@ -256,7 +257,7 @@ namespace QuickShoot.Helpers
                 //break;
             }
             var img = canv.ExportCanvasImage().Result;
-            img.Save(Glob.folderManager.GetCurrentPath() + "\\" + fileName+"-test.png", System.Drawing.Imaging.ImageFormat.Png);
+            img.Save(Glob.folderManager.GetCurrentPath() + "\\" + fileName+".png", System.Drawing.Imaging.ImageFormat.Png);
 
 
         }

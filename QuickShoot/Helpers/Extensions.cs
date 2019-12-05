@@ -108,7 +108,7 @@ namespace QuickShoot.Helpers
         {
             int wid = 0; int hei = 0;
             //ScreenShot.TransformToPixels(canvas.ActualWidth, canvas.ActualHeight, out wid, out hei);
-            wid = canvas.ActualWidth !=0 ? (int)canvas.ActualWidth : (int)canvas.Width;
+            wid = canvas.ActualWidth != 0 ? (int)canvas.ActualWidth : (int)canvas.Width;
             hei = canvas.ActualHeight != 0 ? (int)canvas.ActualHeight : (int)canvas.Height;
             RenderTargetBitmap renderBitmap = new RenderTargetBitmap(
              wid, hei,
@@ -148,6 +148,19 @@ namespace QuickShoot.Helpers
         public static float GetPercentage(this int value, float percentage)
         {
             return (float)value * (percentage / 100);
+        }
+
+        public static int TransformToDevicePixel(this double unitX)
+        {
+            using (Graphics g = Graphics.FromHwnd(IntPtr.Zero))
+            {
+                return (int)((g.DpiX / 96) * unitX);
+            }
+
+        }
+        public static int TransformToDevicePixel(this int unitX)
+        {
+            return Convert.ToDouble(unitX).TransformToDevicePixel();
         }
     }
 }

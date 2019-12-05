@@ -37,20 +37,24 @@ namespace QuickShoot
             Glob.folderManager = new FolderManager();
             Glob.Animate = new Animate();
 
+            Glob.PrimaryScreenWidth = System.Windows.SystemParameters.PrimaryScreenWidth;
+            Glob.PrimaryScreenHeight = System.Windows.SystemParameters.PrimaryScreenHeight;
             //Glob.Animate.Breath(this);
 
             //CONFIG
+            Glob.SetAdjustValues();
             Glob.Config.SelectedBrush = System.Windows.Media.Brushes.Red;
             Glob.Config.EnableAnimations = true;
             Glob.Config.EnableBlurEffect = true;
             Glob.Config.EnableLiteMode = false;
             Glob.Config.EnableOnlyClipboard = false;
-            Glob.Config.BlurRadious = 7;
+            Glob.Config.BackgroundBlurRadious = 7;
             Glob.Config.EditorBackgroundOpacity = .8;
+            
 
 
-            this.Left = System.Windows.SystemParameters.PrimaryScreenWidth - 150;
-            this.Top = System.Windows.SystemParameters.PrimaryScreenHeight - 150;
+            this.Left = Glob.PrimaryScreenWidth - 150;
+            this.Top = Glob.PrimaryScreenHeight - 150;
 
             //var t = Glob.Animate.InitiateBreath().Result;
             //Glob.Animate.Breath(this);
