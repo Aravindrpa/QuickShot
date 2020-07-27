@@ -17,7 +17,8 @@
         RenderOptions.BitmapScalingMode="NearestNeighbor"
         RenderOptions.EdgeMode="Aliased"
         Loaded="capture_window_Loaded"
-        UseLayoutRounding="True">
+        UseLayoutRounding="True"
+        >
     <Grid Name="grid_Base">
         <Image Name="img_Back" Margin="7,7,7,7" Opacity="1" RenderOptions.BitmapScalingMode="NearestNeighbor" 
                RenderOptions.EdgeMode="Aliased" SnapsToDevicePixels="True" UseLayoutRounding="True"></Image>

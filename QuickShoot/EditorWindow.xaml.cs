@@ -145,12 +145,12 @@ namespace QuickShoot
         private void SetShape(DShapes shap)
         {
             this.shape = shap;
-            ToggleButton(this.shape);
+            ToggleShape(this.shape);
         }
         private void SetColor(DColors col)
         {
             this.color = col;
-            ToggleButton2(this.color);
+            ToggleColor(this.color);
         }
 
         public void SaveAndClose()
@@ -242,7 +242,7 @@ namespace QuickShoot
             this.Close();
             Clipboard.SetImage(copyTask.Result);//after calling close - bit faster putting here
         }
-        private void ToggleButton(DShapes shape)
+        private void ToggleShape(DShapes shape)
         {
             switch (shape)
             {
@@ -316,7 +316,7 @@ namespace QuickShoot
                     break;
             }
         }
-        private void ToggleButton2(DColors color)
+        private void ToggleColor(DColors color)
         {
             switch (color)
             {

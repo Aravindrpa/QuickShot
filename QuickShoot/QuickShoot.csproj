@@ -58,6 +58,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Controls\ShapeSwitcher.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="EditorWindowLite.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -76,6 +80,9 @@
     </Compile>
     <Compile Include="CaptureWindow.xaml.cs">
       <DependentUpon>CaptureWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\ShapeSwitcher.xaml.cs">
+      <DependentUpon>ShapeSwitcher.xaml</DependentUpon>
     </Compile>
     <Compile Include="EditorWindowLite.xaml.cs">
       <DependentUpon>EditorWindowLite.xaml</DependentUpon>
