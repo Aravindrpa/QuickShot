@@ -115,8 +115,8 @@ namespace QuickShoot
             ImageBrush ib = new ImageBrush();
             ib.ImageSource = convertTask.Result;
             System.Drawing.Bitmap re = null;
-            var heightPer = Convert.ToInt16(Glob.ScreenHeightWithDPI.GetPercentage(23));
-            var widthPer = Convert.ToInt16(Glob.ScreenWidthWithDPI.GetPercentage(23));
+            var heightPer = Convert.ToInt16(Glob.ScreenHeightWithDPI.GetPercentage());
+            var widthPer = Convert.ToInt16(Glob.ScreenWidthWithDPI.GetPercentage());
             if (Glob.BMPCropped.Height > Glob.ScreenHeightWithDPI - heightPer * 2)
             {
                 re = Glob.BMPCropped.Resize_Picture(0, Glob.ScreenHeightWithDPI - heightPer * 2).Result;

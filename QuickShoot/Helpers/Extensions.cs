@@ -145,8 +145,12 @@ namespace QuickShoot.Helpers
             finally { DeleteObject(handle); }
         }
 
-        public static float GetPercentage(this int value, float percentage)
+        public static float GetPercentage(this int value, float percentage = 0)
         {
+            if (percentage == 0)
+            {
+                percentage = (Glob.ScreenHeightWithDPI <= 768) ? 12 : Glob.ScreenHeightWithDPI <= 1080 ? 20 : 20;
+            }           
             return (float)value * (percentage / 100);
         }
 
