@@ -96,8 +96,8 @@ namespace QuickShoot.Helpers
                 Glob.Config.ShapeThickness = 2;
                 Glob.Config.ShapeShadowDepth = 3;
                 Glob.Config.ShapeShadowBlurRadius = 4;
-                Glob.Config.ShapeShadowBlurRadiusForText = 3;
-                Glob.Config.ShapeShadowDepthForText = 3;
+                Glob.Config.ShapeShadowBlurRadiusForText = 4;
+                Glob.Config.ShapeShadowDepthForText = 1;
                 Glob.Config.ShapeShadowDirection = 320;
                 Glob.Config.ShapeFontSize = 20;
             }
@@ -106,8 +106,8 @@ namespace QuickShoot.Helpers
                 Glob.Config.ShapeThickness = 3;
                 Glob.Config.ShapeShadowDepth = 4;
                 Glob.Config.ShapeShadowBlurRadius = 5;
-                Glob.Config.ShapeShadowBlurRadiusForText = 3;
-                Glob.Config.ShapeShadowDepthForText = 3;
+                Glob.Config.ShapeShadowBlurRadiusForText = 4;
+                Glob.Config.ShapeShadowDepthForText = 1;
                 Glob.Config.ShapeShadowDirection = 320;
                 Glob.Config.ShapeFontSize = 30;
 
