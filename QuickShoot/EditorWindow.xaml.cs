@@ -121,9 +121,13 @@ namespace QuickShoot
             {
                 re = Glob.BMPCropped.Resize_Picture(0, Glob.ScreenHeightWithDPI - heightPer * 2).Result;
             }
-            else if (Glob.BMPCropped.Height > Glob.ScreenWidthWithDPI - widthPer * 2)
+            else if (Glob.BMPCropped.Width > Glob.ScreenWidthWithDPI - widthPer * 2)
             {
                 re = Glob.BMPCropped.Resize_Picture(Glob.ScreenWidthWithDPI - widthPer * 2, 0).Result;
+            }
+            else 
+            {
+                re = Glob.BMPCropped;//.Resize_Picture(Glob.ScreenWidthWithDPI - widthPer * 2, Glob.ScreenHeightWithDPI - heightPer * 2).Result;
             }
             canv_Img.Height = re.Height;
             canv_Img.Width = re.Width;

@@ -16,6 +16,8 @@ namespace QuickShoot.Helpers
 {
     public static class Extensions
     {
+      
+
         public static Bitmap ConvertSourceToBmp(this BitmapSource bitmapsource)
         {
             Bitmap bitmap;
@@ -56,8 +58,21 @@ namespace QuickShoot.Helpers
             }
             else
             {
-                iWidth = FinalWidth;
-                iHeight = FinalHeight;
+                if (FinalWidth > FinalHeight)
+                {
+                    iWidth = FinalWidth;
+                    iHeight = (bmp.Size.Height * iWidth / bmp.Size.Width);
+                }
+                else if (FinalHeight > FinalWidth)
+                {
+                    iHeight = FinalHeight;
+                    iWidth = (bmp.Size.Width * iHeight / bmp.Size.Height);
+                }
+                else
+                {
+                    iWidth = FinalWidth;
+                    iHeight = FinalHeight;
+                }
             }
 
             NewBMP = new System.Drawing.Bitmap(iWidth, iHeight);
